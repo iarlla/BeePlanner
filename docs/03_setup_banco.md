@@ -47,7 +47,7 @@ CREATE TABLE dim_metas (
     subcategoria_id INT REFERENCES dim_subcategorias(id),
     frequencia_id INT REFERENCES dim_frequencias(id),
     titulo VARCHAR(255) NOT NULL,
-    status_notion VARCHAR(50),
+    nivel_de_realidade VARCHAR(50), -- delusion, dream, goal, reality, 
     total_dias_100 INT,      -- Calculado via Python
     alvo_75_percent INT,     -- Calculado via Python
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -94,12 +94,4 @@ SELECT
 FROM dim_metas m
 LEFT JOIN fact_execucoes e ON m.id = e.meta_id
 GROUP BY m.titulo, m.total_dias_100, m.alvo_75_percent;
-```
-
-```sql
-
-```
-
-```sql
-
 ```

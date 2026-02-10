@@ -3,7 +3,9 @@ CREATE TABLE dim_metas (
     subcategoria_id INT REFERENCES dim_subcategorias(id),
     frequencia_id INT REFERENCES dim_frequencias(id),
     titulo VARCHAR(255) NOT NULL,
-    nivel_de_realidade VARCHAR(50), -- dream, reality, goal
+    nivel_de_realidade VARCHAR(50), -- delusion, dream, goal, reality, 
+    total_dias_100 INT,      -- Calculado via Python
+    alvo_75_percent INT,     -- Calculado via Python
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
