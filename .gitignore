@@ -1,0 +1,51 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.manifest
+*.spec
+
+# --- Ambientes Virtuais ---
+venv/
+.venv/
+env/
+ENV/
+
+# --- Variáveis de Ambiente e Segredos (CRÍTICO) ---
+.env
+.env.local
+config.py
+secrets.py
+# Como você tem senhas nos scripts atuais, recomendo usar .env
+# Mas se ainda não refatorou, cuidado ao commitar arquivos com senha!
+
+# --- Dados (Data Engineering) ---
+# Ignorar dados brutos (Privacidade) e processados (podem ser regerados)
+data/raw/*
+data/processed/*
+*.csv
+*.json
+*.xlsx
+
+# Exceção: Manter a pasta de seeds (dados estáticos iniciais)
+!data/seeds/
+!data/seeds/.gitkeep
+
+# --- IDEs e Editores ---
+.vscode/
+.idea/
+*.swp
+
+# --- Logs e Banco de Dados Local ---
+*.log
+logs/
+*.sqlite3
+# Se você tiver dumps locais do Postgres
+*.sql
+!database/ddl/*.sql
+!database/seeds/*.sql
+!database/views/*.sql
+
+# --- Sistema Operacional ---
+.DS_Store
+Thumbs.db
