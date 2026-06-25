@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeePlanner - Life Engineering Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Paleta Base (Dark Mode) */
+            --bg-body: #0F172A;
+            --bg-card: #1E293B;
+            --primary: #FBBF24; /* Amarelo BeePlanner */
+            --primary-hover: #F59E0B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --border-color: #334155;
+            
+            /* Cores de Status */
+            --status-success: #10B981;
+            --status-attention: #F97316;
+            --status-low: #EF4444;
+
+            /* Tipografia */
+            --font-ui: 'Inter', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            
+            /* Espaçamentos padrão */
+            --sp-sm: 8px;
+            --sp-md: 16px;
+            --sp-lg: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- ESTRUTURA GERAL --- */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--sp-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-lg);
+        }
+
+        /* --- CABEÇALHO --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: var(--sp-md);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: var(--sp-md);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-sm);
+        }
+
+        .header-logo {
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
+        }
+        
+        .header-logo::before {
+            content: '🐝';
+            font-size: 24px;
+        }
+
+        .header-titles h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-titles p {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* --- CARDS DE MÉTRICAS (KPIs) --- */
+        .scorecards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--sp-md);
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: var(--sp-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: var(--text-main);
+        }
+
+        .card-value.highlight {
+            color: var(--primary);
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Gráfico Circular CSS (Progresso Global) */
+        .progress-circle {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 70%, var(--border-color) 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress-circle::after {
+            content: '';
+            position: absolute;
+            width: 54px;
+            height: 54px;
+            background-color: var(--bg-card);
+            border-radius: 50%;
+        }
+
+        .progress-value {
+            position: relative;
+            z-index: 1;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* --- ÁREA PRINCIPAL (RODA DA VIDA E LISTA) --- */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--sp-lg);
+        }
+
+        /* PAINEL GRÁFICO SVG */
+        .radar-panel {
+            align-items: center;
+            min-height: 380px;
+        }
+
+        .radar-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 1/1;
+            margin-top: 20px;
+        }
+
+        svg.radar-chart { width: 100%; height: 100%; }
+        .radar-grid { fill: none; stroke: var(--border-color); stroke-width: 1; }
+        .radar-axis { stroke: var(--border-color); stroke-width: 1; stroke-dasharray: 4; }
+        .radar-target { fill: none; stroke: var(--primary); stroke-width: 1.5; stroke-dasharray: 5; }
+        .radar-data { fill: rgba(16, 185, 129, 0.2); stroke: var(--status-success); stroke-width: 2; }
+        .radar-text { fill: var(--text-muted); font-size: 13px; font-weight: 500; text-anchor: middle; font-family: var(--font-ui); }
+
+        /* LISTA DE METAS CRÍTICAS */
+        .goals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .goal-item {
+            background-color: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            padding: var(--sp-md);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: var(--sp-md);
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+        
+        .goal-item:hover { border-color: var(--border-color); }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .badge.success { background-color: rgba(16, 185, 129, 0.15); color: var(--status-success); border: 1px solid rgba(16,185,129,0.3); }
+        .badge.attention { background-color: rgba(249, 115, 22, 0.15); color: var(--status-attention); border: 1px solid rgba(249,115,22,0.3); }
+        .badge.low { background-color: rgba(239, 68, 68, 0.15); color: var(--status-low); border: 1px solid rgba(239,68,68,0.3); }
+
+        .goal-info { display: flex; flex-direction: column; gap: 4px; }
+        .goal-title { font-size: 14px; font-weight: 500; color: var(--text-main); }
+
+        /* Barra de Progresso Mini */
+        .progress-bar-bg {
+            width: 100%; height: 6px; background-color: var(--border-color);
+            border-radius: 3px; overflow: hidden; margin-top: 4px;
+        }
+        .progress-bar-fill { height: 100%; border-radius: 3px; }
+        .goal-metric { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+
+        /* --- BOTÃO FLUTUANTE (MOBILE & REGISTRO RÁPIDO) --- */
+        .fab {
+            position: fixed;
+            bottom: var(--sp-lg);
+            right: var(--sp-lg);
+            width: 56px;
+            height: 56px;
+            background-color: var(--primary);
+            color: var(--bg-body);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 8px 15px -3px rgba(251, 191, 36, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            border: none;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: translateY(-2px);
+            background-color: var(--primary-hover);
+        }
+
+        /* --- ADAPTAÇÃO PARA DISPOSITIVOS MÓVEIS --- */
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .header-meta { text-align: left; width: 100%; }
+        }
+        
+        @media (max-width: 600px) {
+            .goal-item {
+                grid-template-columns: 1fr;
+                gap: var(--sp-sm);
+            }
+            .goal-metric { text-align: right; }
+            .badge { align-self: flex-start; }
+            .radar-panel { min-height: 320px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <header class="header">
+            <div class="header-brand">
+                <div class="header-logo"></div>
+                <div class="header-titles">
+                    <h1>BeePlanner</h1>
+                    <p>"O que não é medido não é gerenciado."</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div>25 Jun 2026</div>
+                <div style="color: var(--primary);">Dia 176, Semana 26</div>
+            </div>
+        </header>
+
+        <div class="scorecards-grid">
+            <div class="card" style="flex-direction: row; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 class="card-title">Média de Rumo</h2>
+                    <p class="card-subtitle">Alvo: 75% da Colmeia</p>
+                </div>
+                <div class="progress-circle">
+                    <span class="progress-value">70%</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Metas Ativas</h2>
+                <div class="card-value highlight">42</div>
+                <p class="card-subtitle">Acompanhadas via Database</p>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Check-ins Hoje</h2>
+                <div class="card-value">15 <span style="font-size:14px; color:var(--text-muted);">/ 21</span></div>
+                <p class="card-subtitle">Sincronizados via API</p>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Ata / Diário de Bordo</h2>
+                <div class="card-value" style="font-size: 22px; margin-top:8px;">24 Jun 2026</div>
+                <p class="card-subtitle" style="font-family: var(--font-mono); color: var(--status-success);">✅ Dados Preservados</p>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            
+            <div class="card radar-panel">
+                <div style="width: 100%; display:flex; justify-content: space-between;">
+                    <h2 class="card-title">Roda da Vida (Balanceamento)</h2>
+                    <span class="badge" style="background-color: transparent; border: 1px dashed var(--primary); color: var(--primary);">Alvo Global</span>
+                </div>
+                
+                <div class="radar-wrapper">
+                    <svg class="radar-chart" viewBox="0 0 300 300">
+                        <circle class="radar-grid" cx="150" cy="150" r="100"></circle>
+                        <circle class="radar-grid" cx="150" cy="150" r="75"></circle>
+                        <circle class="radar-grid" cx="150" cy="150" r="50"></circle>
+                        <circle class="radar-grid" cx="150" cy="150" r="25"></circle>
+
+                        <line class="radar-axis" x1="150" y1="50" x2="150" y2="250" />
+                        <line class="radar-axis" x1="50" y1="150" x2="250" y2="150" />
+
+                        <circle class="radar-target" cx="150" cy="150" r="75"></circle>
+
+                        <polygon class="radar-data" points="150,70 240,150 150,210 80,150" />
+
+                        <text x="150" y="35" class="radar-text">Profissional</text>
+                        <text x="280" y="155" class="radar-text">Relacionamentos</text>
+                        <text x="150" y="270" class="radar-text">Qualidade de Vida</text>
+                        <text x="20" y="155" class="radar-text">Pessoal</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display:flex; justify-content: space-between;">
+                    <h2 class="card-title">Radar de Metas Críticas</h2>
+                    <span class="card-subtitle">Ordenado por Desvio Padrão</span>
+                </div>
+
+                <div class="goals-list">
+                    <div class="goal-item">
+                        <span class="badge low">Atrasado</span>
+                        <div class="goal-info">
+                            <span class="goal-title">Ler 1 capítulo da Bíblia (Diário)</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 45%; background-color: var(--status-low);"></div>
+                            </div>
+                        </div>
+                        <span class="goal-metric">45% <span style="font-size:10px;color:var(--text-muted);">/ 75%</span></span>
+                    </div>
+
+                    <div class="goal-item">
+                        <span class="badge attention">Atenção</span>
+                        <div class="goal-info">
+                            <span class="goal-title">Leitura Tech (Dom/Ter/Qui)</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 68%; background-color: var(--status-attention);"></div>
+                            </div>
+                        </div>
+                        <span class="goal-metric">68% <span style="font-size:10px;color:var(--text-muted);">/ 75%</span></span>
+                    </div>
+
+                    <div class="goal-item">
+                        <span class="badge attention">Atenção</span>
+                        <div class="goal-info">
+                            <span class="goal-title">Podcast in English</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 72%; background-color: var(--status-attention);"></div>
+                            </div>
+                        </div>
+                        <span class="goal-metric">72% <span style="font-size:10px;color:var(--text-muted);">/ 75%</span></span>
+                    </div>
+
+                    <div class="goal-item">
+                        <span class="badge success">No Rumo</span>
+                        <div class="goal-info">
+                            <span class="goal-title">Guardar dinheiro (10º dia útil)</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 80%; background-color: var(--status-success);"></div>
+                            </div>
+                        </div>
+                        <span class="goal-metric">80% <span style="font-size:10px;color:var(--text-muted);">/ 75%</span></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <button class="fab" title="Lançar Ata de Hoje" onclick="alert('Isto invocaria a interface Python ou modal de envio para o banco de dados.')">
+        +
+    </button>
+
+</body>
+</html>
