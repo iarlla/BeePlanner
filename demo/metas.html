@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeePlanner - Cadastro de Metas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="beeplanner.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <header class="header">
+            <div class="header-brand">
+                <div class="header-logo"></div>
+                <div class="header-titles">
+                    <h1>BeePlanner</h1>
+                    <p>"O que não é medido não é gerenciado."</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div id="data-extenso">—</div>
+                <div style="color: var(--primary);" id="data-dia-semana">—</div>
+            </div>
+        </header>
+
+        <nav class="tabs-nav">
+            <a class="tab-btn" href="dashboard.html">
+                <span class="tab-icon">📊</span><span class="tab-label">Dashboard</span>
+            </a>
+            <a class="tab-btn active" href="metas.html">
+                <span class="tab-icon">🎯</span><span class="tab-label">Metas</span>
+            </a>
+            <a class="tab-btn" href="tarefas.html">
+                <span class="tab-icon">✅</span><span class="tab-label">Tarefas</span>
+            </a>
+            <a class="tab-btn" href="roda-da-vida.html">
+                <span class="tab-icon">🧭</span><span class="tab-label">Roda da Vida</span>
+            </a>
+        </nav>
+
+        <section class="dashboard-view">
+
+            <div class="view-header">
+                <div>
+                    <h2>Cadastro de Metas</h2>
+                    <p>Defina a meta, sua frequência e a área da Roda da Vida correspondente. Alimenta a tabela <span style="font-family:var(--font-mono); color: var(--text-muted);">dim_metas</span>.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modal-nova-meta')">
+                    <span>+</span> Nova Meta
+                </button>
+            </div>
+
+            <div class="card" style="gap: var(--sp-md);">
+                <div class="table-toolbar">
+                    <div class="search-field">
+                        <input type="text" placeholder="Buscar meta por nome...">
+                    </div>
+                    <button class="filter-chip active">Todas (6)</button>
+                    <button class="filter-chip">🐝 Profissional</button>
+                    <button class="filter-chip">❤️ Relacionamentos</button>
+                    <button class="filter-chip">🧘 Qualidade de Vida</button>
+                    <button class="filter-chip">📚 Pessoal</button>
+                </div>
+
+                <div class="record-list">
+                    <div class="record-item">
+                        <span class="record-color-dot" style="background-color:#EF4444;"></span>
+                        <div class="record-main">
+                            <span class="record-title">Ler 1 capítulo da Bíblia</span>
+                            <span class="record-meta">📚 Pessoal · Diária · 365 ocorrências/ano</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-low);">45% / 75%</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="record-item">
+                        <span class="record-color-dot" style="background-color:#F97316;"></span>
+                        <div class="record-main">
+                            <span class="record-title">Leitura Tech</span>
+                            <span class="record-meta">🐝 Profissional · Dom / Ter / Qui · 156 ocorrências/ano</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-attention);">68% / 75%</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="record-item">
+                        <span class="record-color-dot" style="background-color:#F97316;"></span>
+                        <div class="record-main">
+                            <span class="record-title">Podcast in English</span>
+                            <span class="record-meta">📚 Pessoal · Ter / Qui · 105 ocorrências/ano</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-attention);">72% / 75%</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="record-item">
+                        <span class="record-color-dot" style="background-color:#10B981;"></span>
+                        <div class="record-main">
+                            <span class="record-title">Guardar dinheiro</span>
+                            <span class="record-meta">🧘 Qualidade de Vida · 10º dia útil do mês · 12 ocorrências/ano</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-success);">80% / 75%</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="record-item">
+                        <span class="record-color-dot" style="background-color:#10B981;"></span>
+                        <div class="record-main">
+                            <span class="record-title">Ligar para os pais</span>
+                            <span class="record-meta">❤️ Relacionamentos · Semanal (Domingo) · 52 ocorrências/ano</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-success);">88% / 75%</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="record-item">
+                        <span class="record-color-dot" style="background-color:#10B981;"></span>
+                        <div class="record-main">
+                            <span class="record-title">Treino de força</span>
+                            <span class="record-meta">🧘 Qualidade de Vida · Seg / Qua / Sex · 156 ocorrências/ano</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-success);">91% / 75%</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+        <button class="fab" title="Lançar Ata de Hoje" onclick="alert('Isto invocaria a interface Python ou modal de envio para o banco de dados.')">
+        +
+    </button>
+
+    <div class="modal-overlay" id="modal-nova-meta">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>🎯 Nova Meta</h3>
+                <button class="modal-close" onclick="closeModal('modal-nova-meta')">✕</button>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field full">
+                    <label for="meta-nome">Nome da meta</label>
+                    <input type="text" id="meta-nome" placeholder="Ex: Ler 1 capítulo da Bíblia">
+                </div>
+
+                <div class="form-field full">
+                    <label for="meta-desc">Descrição <span class="hint">(opcional)</span></label>
+                    <textarea id="meta-desc" placeholder="Detalhe o que conta como conclusão dessa meta..."></textarea>
+                </div>
+
+                <div class="form-field">
+                    <label for="meta-area">Área da Roda da Vida</label>
+                    <select id="meta-area">
+                        <option>🐝 Profissional</option>
+                        <option>❤️ Relacionamentos</option>
+                        <option selected>🧘 Qualidade de Vida</option>
+                        <option>📚 Pessoal</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="meta-tipo">Tipo de frequência</label>
+                    <select id="meta-tipo" onchange="toggleFrequencyFields(this.value)">
+                        <option value="diaria">Diária</option>
+                        <option value="semanal" selected>Dias específicos da semana</option>
+                        <option value="mensal">Dia fixo do mês</option>
+                        <option value="dia_util">Dia útil do mês (ex: 10º dia útil)</option>
+                    </select>
+                </div>
+
+                <div class="form-field full" id="campo-dias-semana">
+                    <label>Dias da semana</label>
+                    <div class="weekday-picker">
+                        <div class="weekday-chip" data-day="dom">DOM</div>
+                        <div class="weekday-chip selected" data-day="seg">SEG</div>
+                        <div class="weekday-chip" data-day="ter">TER</div>
+                        <div class="weekday-chip selected" data-day="qua">QUA</div>
+                        <div class="weekday-chip" data-day="qui">QUI</div>
+                        <div class="weekday-chip selected" data-day="sex">SEX</div>
+                        <div class="weekday-chip" data-day="sab">SAB</div>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="meta-alvo">Alvo de aderência</label>
+                    <div class="slider-row">
+                        <input type="range" id="meta-alvo" min="0" max="100" value="75" oninput="document.getElementById('alvo-valor').innerText = this.value + '%'">
+                        <span class="slider-value" id="alvo-valor">75%</span>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="meta-inicio">Início da vigência</label>
+                    <input type="date" id="meta-inicio" value="2026-01-01">
+                </div>
+
+                <div class="form-field full">
+                    <label for="meta-cor">Cor de identificação</label>
+                    <div class="color-picker">
+                        <div class="color-swatch selected" style="background:#10B981;"></div>
+                        <div class="color-swatch" style="background:#F97316;"></div>
+                        <div class="color-swatch" style="background:#EF4444;"></div>
+                        <div class="color-swatch" style="background:#38BDF8;"></div>
+                        <div class="color-swatch" style="background:#A78BFA;"></div>
+                        <div class="color-swatch" style="background:#FBBF24;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('modal-nova-meta')">Cancelar</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-nova-meta'); showToast('Meta salva com sucesso!')">Salvar Meta</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="beeplanner.js"></script>
+    <script>
+        // --- Específico desta página: chips de dia da semana (modal de meta) ---
+        document.querySelectorAll('.weekday-chip').forEach(chip => {
+            chip.addEventListener('click', () => chip.classList.toggle('selected'));
+        });
+
+        // --- Específico desta página: mostrar/esconder dias da semana conforme o tipo de frequência ---
+        function toggleFrequencyFields(tipo) {
+            const campo = document.getElementById('campo-dias-semana');
+            campo.style.display = (tipo === 'semanal') ? 'flex' : 'none';
+        }
+    </script>
+
+</body>
+</html>

@@ -851,8 +851,8 @@
                 </div>
             </div>
             <div class="header-meta">
-                <div>25 Jun 2026</div>
-                <div style="color: var(--primary);">Dia 176, Semana 26</div>
+                <div id="data-extenso">—</div>
+                <div style="color: var(--primary);" id="data-dia-semana">—</div>
             </div>
         </header>
 
@@ -1510,6 +1510,56 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // --- DATA DO CABEÇALHO ---
+        // Espelha a lógica de scripts/daily_ops/gerar_data_padrao.py (Python).
+        // Importante: usa %U (semana iniciando no domingo, 00–53), igual ao
+        // script Python — NÃO é a semana ISO 8601 (%V). Se a regra do .py
+        // mudar um dia, esta função precisa ser atualizada também.
+        function calcularDataPadrao(agora = new Date()) {
+            const MESES = [
+                'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+            ];
+            const MESES_ABREV = [
+                'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+            ];
+            const DIAS_SEMANA = [
+                'domingo', 'segunda-feira', 'terça-feira', 'quarta-feira',
+                'quinta-feira', 'sexta-feira', 'sábado'
+            ];
+
+            const ano = agora.getFullYear();
+            const mes = agora.getMonth(); // 0-indexado
+            const dia = agora.getDate();
+            const diaSemana = agora.getDay(); // 0=domingo ... 6=sábado
+
+            // %j — dia do ano (1–366), via UTC para evitar bugs de horário de verão
+            const inicioAno = new Date(ano, 0, 1);
+            const diaDoAno = Math.floor((agora - inicioAno) / 86400000) + 1;
+
+            // %U — número da semana, domingo como primeiro dia (00–53)
+            // Mesma fórmula usada pelo strftime('%U') do Python.
+            const semanaU = Math.floor((diaDoAno + 6 - diaSemana) / 7);
+
+            return {
+                dataCurta: `${String(dia).padStart(2, '0')} ${MESES_ABREV[mes]} ${ano}`,
+                diaDoAno: String(diaDoAno).padStart(3, '0'),
+                semana: String(semanaU).padStart(2, '0'),
+                diaSemanaExtenso: DIAS_SEMANA[diaSemana],
+                mesExtenso: MESES[mes],
+                dataExtensa: `Dia ${String(diaDoAno).padStart(3, '0')}, Semana ${String(semanaU).padStart(2, '0')}, ${DIAS_SEMANA[diaSemana]}, ${String(dia).padStart(2, '0')} de ${MESES[mes]} de ${ano}`
+            };
+        }
+
+        function atualizarCabecalhoData() {
+            const d = calcularDataPadrao();
+            document.getElementById('data-extenso').textContent = d.dataCurta;
+            document.getElementById('data-dia-semana').textContent = `Dia ${d.diaDoAno}, Semana ${d.semana}`;
+        }
+
+        atualizarCabecalhoData();
+
         // --- NAVEGAÇÃO ENTRE ABAS ---
         const tabs = document.querySelectorAll('.tab-btn');
         const views = document.querySelectorAll('.view');

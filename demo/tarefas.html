@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeePlanner - Tarefas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="beeplanner.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <header class="header">
+            <div class="header-brand">
+                <div class="header-logo"></div>
+                <div class="header-titles">
+                    <h1>BeePlanner</h1>
+                    <p>"O que não é medido não é gerenciado."</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div id="data-extenso">—</div>
+                <div style="color: var(--primary);" id="data-dia-semana">—</div>
+            </div>
+        </header>
+
+        <nav class="tabs-nav">
+            <a class="tab-btn" href="dashboard.html">
+                <span class="tab-icon">📊</span><span class="tab-label">Dashboard</span>
+            </a>
+            <a class="tab-btn" href="metas.html">
+                <span class="tab-icon">🎯</span><span class="tab-label">Metas</span>
+            </a>
+            <a class="tab-btn active" href="tarefas.html">
+                <span class="tab-icon">✅</span><span class="tab-label">Tarefas</span>
+            </a>
+            <a class="tab-btn" href="roda-da-vida.html">
+                <span class="tab-icon">🧭</span><span class="tab-label">Roda da Vida</span>
+            </a>
+        </nav>
+
+        <section class="dashboard-view">
+
+            <div class="view-header">
+                <div>
+                    <h2>Tarefas do Dia</h2>
+                    <p>Registre check-ins manuais ou confira o que veio sincronizado do Google Tasks. Alimenta a tabela <span style="font-family:var(--font-mono); color: var(--text-muted);">fact_execucoes</span>.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modal-nova-tarefa')">
+                    <span>+</span> Registrar Tarefa
+                </button>
+            </div>
+
+            <div class="scorecards-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <div class="card" style="padding: var(--sp-md); gap: 6px;">
+                    <h2 class="card-title">Concluídas Hoje</h2>
+                    <div class="card-value highlight" style="font-size: 26px;">15</div>
+                </div>
+                <div class="card" style="padding: var(--sp-md); gap: 6px;">
+                    <h2 class="card-title">Pendentes</h2>
+                    <div class="card-value" style="font-size: 26px;">6</div>
+                </div>
+                <div class="card" style="padding: var(--sp-md); gap: 6px;">
+                    <h2 class="card-title">Via Google Tasks</h2>
+                    <div class="card-value" style="font-size: 26px;">12</div>
+                </div>
+                <div class="card" style="padding: var(--sp-md); gap: 6px;">
+                    <h2 class="card-title">Registro Manual</h2>
+                    <div class="card-value" style="font-size: 26px;">9</div>
+                </div>
+            </div>
+
+            <div class="card" style="gap: var(--sp-md);">
+                <div class="table-toolbar">
+                    <div class="search-field">
+                        <input type="text" placeholder="Buscar tarefa...">
+                    </div>
+                    <button class="filter-chip active">Hoje</button>
+                    <button class="filter-chip">✅ Concluídas</button>
+                    <button class="filter-chip">⏳ Pendentes</button>
+                    <button class="filter-chip">🔄 Google Tasks</button>
+                </div>
+
+                <div class="record-list">
+                    <div class="record-item">
+                        <input type="checkbox" checked style="width:18px; height:18px; accent-color: var(--status-success);">
+                        <div class="record-main">
+                            <span class="record-title" style="text-decoration: line-through; color: var(--text-muted);">Leitura Tech — capítulo 4</span>
+                            <span class="record-meta">🐝 Profissional · Sincronizado via Google Tasks · 08:42</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-success);">✅ Feito</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="record-item">
+                        <input type="checkbox" checked style="width:18px; height:18px; accent-color: var(--status-success);">
+                        <div class="record-main">
+                            <span class="record-title" style="text-decoration: line-through; color: var(--text-muted);">Treino de força</span>
+                            <span class="record-meta">🧘 Qualidade de Vida · Registro Manual · 18:15</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-success);">✅ Feito</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="record-item">
+                        <input type="checkbox" style="width:18px; height:18px; accent-color: var(--status-attention);">
+                        <div class="record-main">
+                            <span class="record-title">Podcast in English</span>
+                            <span class="record-meta">📚 Pessoal · Sincronizado via Google Tasks · Pendente</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-attention);">⏳ Pendente</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="record-item">
+                        <input type="checkbox" style="width:18px; height:18px; accent-color: var(--status-low);">
+                        <div class="record-main">
+                            <span class="record-title">Ler 1 capítulo da Bíblia</span>
+                            <span class="record-meta">📚 Pessoal · Registro Manual · Pendente</span>
+                        </div>
+                        <span class="record-stat" style="color: var(--status-low);">⏳ Pendente</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+        <button class="fab" title="Lançar Ata de Hoje" onclick="alert('Isto invocaria a interface Python ou modal de envio para o banco de dados.')">
+        +
+    </button>
+
+    <div class="modal-overlay" id="modal-nova-tarefa">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>✅ Registrar Tarefa</h3>
+                <button class="modal-close" onclick="closeModal('modal-nova-tarefa')">✕</button>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field full">
+                    <label for="tarefa-meta">Vincular à meta</label>
+                    <select id="tarefa-meta">
+                        <option>Ler 1 capítulo da Bíblia</option>
+                        <option>Leitura Tech</option>
+                        <option selected>Podcast in English</option>
+                        <option>Guardar dinheiro</option>
+                        <option>Ligar para os pais</option>
+                        <option>Treino de força</option>
+                        <option>— Tarefa avulsa (sem meta vinculada) —</option>
+                    </select>
+                </div>
+
+                <div class="form-field full">
+                    <label for="tarefa-titulo">Título da tarefa</label>
+                    <input type="text" id="tarefa-titulo" placeholder="Ex: Podcast in English — episódio 12">
+                </div>
+
+                <div class="form-field">
+                    <label for="tarefa-data">Data</label>
+                    <input type="date" id="tarefa-data" value="2026-06-25">
+                </div>
+
+                <div class="form-field">
+                    <label for="tarefa-origem">Origem do registro</label>
+                    <select id="tarefa-origem">
+                        <option selected>Registro Manual</option>
+                        <option>Google Tasks (Sync)</option>
+                    </select>
+                </div>
+
+                <div class="form-field full">
+                    <label for="tarefa-status">Status</label>
+                    <select id="tarefa-status">
+                        <option>⏳ Pendente</option>
+                        <option selected>✅ Concluída</option>
+                        <option>❌ Não realizada</option>
+                    </select>
+                </div>
+
+                <div class="form-field full">
+                    <label for="tarefa-obs">Observações <span class="hint">(vai para a Ata do dia)</span></label>
+                    <textarea id="tarefa-obs" placeholder="Notas rápidas sobre a execução..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('modal-nova-tarefa')">Cancelar</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-nova-tarefa'); showToast('Tarefa registrada!')">Salvar Tarefa</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="beeplanner.js"></script>
+
+</body>
+</html>

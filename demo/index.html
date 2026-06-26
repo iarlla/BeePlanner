@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeePlanner - Life Engineering</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="beeplanner.css">
+
+    <style>
+        /* As variáveis de cor/tipografia (--bg-body, --primary, --font-ui, etc.)
+           vêm do beeplanner.css importado acima. Aqui ficam só as classes
+           exclusivas do splash (.splash-*), que não são usadas em nenhuma
+           outra página. */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(251, 191, 36, 0.08), transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.06), transparent 45%);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .splash-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 28px;
+            max-width: 420px;
+            width: 100%;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .splash-logo {
+            width: 88px;
+            height: 88px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 0 8px rgba(251, 191, 36, 0.06);
+        }
+
+        .splash-logo::before {
+            content: '🐝';
+            font-size: 44px;
+        }
+
+        .splash-titles h1 {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .splash-titles p {
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .splash-meta {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .splash-meta .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #10B981;
+            box-shadow: 0 0 6px #10B981;
+        }
+
+        .splash-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .btn-enter {
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 15px;
+            text-decoration: none;
+            background-color: var(--primary);
+            color: var(--bg-body);
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background-color 0.2s, transform 0.15s;
+        }
+
+        .btn-enter:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-enter:active {
+            transform: scale(0.98);
+        }
+
+        .splash-links {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .splash-links a {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .splash-links a:hover {
+            color: var(--primary);
+        }
+
+        .splash-footer {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash-card">
+        <div class="splash-logo"></div>
+
+        <div class="splash-titles">
+            <h1>BeePlanner</h1>
+            <p>"O que não é medido não é gerenciado."</p>
+        </div>
+
+        <div class="splash-meta">
+            <span class="dot"></span>
+            <span id="splash-data">—</span>
+        </div>
+
+        <div class="splash-actions">
+            <a class="btn-enter" href="dashboard.html">
+                📊 Entrar no Dashboard
+            </a>
+        </div>
+
+        <nav class="splash-links">
+            <a href="metas.html">🎯 Metas</a>
+            <a href="tarefas.html">✅ Tarefas</a>
+            <a href="roda-da-vida.html">🧭 Roda da Vida</a>
+        </nav>
+
+        <p class="splash-footer">Life Engineering 2026 · Iarla</p>
+    </div>
+
+    <script src="beeplanner.js"></script>
+
+</body>
+</html>

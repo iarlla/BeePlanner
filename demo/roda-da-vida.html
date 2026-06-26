@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeePlanner - Roda da Vida</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="beeplanner.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <header class="header">
+            <div class="header-brand">
+                <div class="header-logo"></div>
+                <div class="header-titles">
+                    <h1>BeePlanner</h1>
+                    <p>"O que não é medido não é gerenciado."</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div id="data-extenso">—</div>
+                <div style="color: var(--primary);" id="data-dia-semana">—</div>
+            </div>
+        </header>
+
+        <nav class="tabs-nav">
+            <a class="tab-btn" href="dashboard.html">
+                <span class="tab-icon">📊</span><span class="tab-label">Dashboard</span>
+            </a>
+            <a class="tab-btn" href="metas.html">
+                <span class="tab-icon">🎯</span><span class="tab-label">Metas</span>
+            </a>
+            <a class="tab-btn" href="tarefas.html">
+                <span class="tab-icon">✅</span><span class="tab-label">Tarefas</span>
+            </a>
+            <a class="tab-btn active" href="roda-da-vida.html">
+                <span class="tab-icon">🧭</span><span class="tab-label">Roda da Vida</span>
+            </a>
+        </nav>
+
+        <section class="dashboard-view">
+
+            <div class="view-header">
+                <div>
+                    <h2>Áreas da Roda da Vida</h2>
+                    <p>Configure os quadrantes do radar e o peso de cada um no cálculo da Média de Rumo global.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modal-nova-area')">
+                    <span>+</span> Nova Área
+                </button>
+            </div>
+
+            <div class="area-grid">
+                <div class="area-card" style="border-left-color:#FBBF24;">
+                    <div class="area-card-top">
+                        <span class="area-card-title">🐝 Profissional</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="area-card-desc">Carreira, estudos técnicos e projetos de engenharia.</p>
+                    <div class="area-card-footer">
+                        <span>Peso no radar: <strong style="color:var(--text-main);">25%</strong></span>
+                        <span>11 metas</span>
+                    </div>
+                </div>
+
+                <div class="area-card" style="border-left-color:#EF4444;">
+                    <div class="area-card-top">
+                        <span class="area-card-title">❤️ Relacionamentos</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="area-card-desc">Família, amizades e vínculos pessoais próximos.</p>
+                    <div class="area-card-footer">
+                        <span>Peso no radar: <strong style="color:var(--text-main);">25%</strong></span>
+                        <span>8 metas</span>
+                    </div>
+                </div>
+
+                <div class="area-card" style="border-left-color:#10B981;">
+                    <div class="area-card-top">
+                        <span class="area-card-title">🧘 Qualidade de Vida</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="area-card-desc">Saúde, finanças, sono e bem-estar geral.</p>
+                    <div class="area-card-footer">
+                        <span>Peso no radar: <strong style="color:var(--text-main);">25%</strong></span>
+                        <span>15 metas</span>
+                    </div>
+                </div>
+
+                <div class="area-card" style="border-left-color:#38BDF8;">
+                    <div class="area-card-top">
+                        <span class="area-card-title">📚 Pessoal</span>
+                        <div class="record-actions">
+                            <button class="btn-icon-only" title="Editar">✏️</button>
+                            <button class="btn-icon-only" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="area-card-desc">Espiritualidade, idiomas e desenvolvimento próprio.</p>
+                    <div class="area-card-footer">
+                        <span>Peso no radar: <strong style="color:var(--text-main);">25%</strong></span>
+                        <span>8 metas</span>
+                    </div>
+                </div>
+
+                <div class="area-card area-add-card" onclick="openModal('modal-nova-area')">
+                    <span>+ Adicionar área</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title" style="margin-bottom: 4px;">Soma dos Pesos</h2>
+                <div style="display:flex; align-items:center; gap: var(--sp-md);">
+                    <div class="progress-bar-bg" style="flex:1; height: 10px;">
+                        <div class="progress-bar-fill" style="width: 100%; background-color: var(--status-success);"></div>
+                    </div>
+                    <span class="record-stat" style="color: var(--status-success);">100% ✅</span>
+                </div>
+                <p class="card-subtitle">A soma dos pesos das áreas deve totalizar 100% para que o cálculo da Média de Rumo seja consistente.</p>
+            </div>
+        </section>
+
+    </div>
+
+        <button class="fab" title="Lançar Ata de Hoje" onclick="alert('Isto invocaria a interface Python ou modal de envio para o banco de dados.')">
+        +
+    </button>
+
+    <div class="modal-overlay" id="modal-nova-area">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>🧭 Nova Área da Roda da Vida</h3>
+                <button class="modal-close" onclick="closeModal('modal-nova-area')">✕</button>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field full">
+                    <label for="area-nome">Nome da área</label>
+                    <input type="text" id="area-nome" placeholder="Ex: Espiritualidade">
+                </div>
+
+                <div class="form-field full">
+                    <label for="area-icone">Ícone (emoji)</label>
+                    <input type="text" id="area-icone" placeholder="Ex: 🙏" maxlength="2" style="max-width: 100px;">
+                </div>
+
+                <div class="form-field full">
+                    <label for="area-desc">Descrição <span class="hint">(opcional)</span></label>
+                    <textarea id="area-desc" placeholder="O que essa área representa na sua Roda da Vida..."></textarea>
+                </div>
+
+                <div class="form-field">
+                    <label for="area-peso">Peso no radar global</label>
+                    <div class="slider-row">
+                        <input type="range" id="area-peso" min="0" max="100" value="20" oninput="document.getElementById('peso-valor').innerText = this.value + '%'">
+                        <span class="slider-value" id="peso-valor">20%</span>
+                    </div>
+                </div>
+
+                <div class="form-field full">
+                    <label>Cor de identificação</label>
+                    <div class="color-picker">
+                        <div class="color-swatch selected" style="background:#38BDF8;"></div>
+                        <div class="color-swatch" style="background:#10B981;"></div>
+                        <div class="color-swatch" style="background:#F97316;"></div>
+                        <div class="color-swatch" style="background:#EF4444;"></div>
+                        <div class="color-swatch" style="background:#A78BFA;"></div>
+                        <div class="color-swatch" style="background:#FBBF24;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('modal-nova-area')">Cancelar</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-nova-area'); showToast('Área adicionada à Roda da Vida!')">Salvar Área</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="beeplanner.js"></script>
+
+</body>
+</html>
