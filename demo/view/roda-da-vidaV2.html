@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeePlanner - Roda da Vida</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="beeplanner.css">
+
+    <style>
+        /* ── Macro-area group layout ── */
+        .macro-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 28px;
+        }
+
+        .macro-group:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .macro-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 0;
+        }
+
+        .macro-header-icon {
+            font-size: 1.15rem;
+            line-height: 1;
+        }
+
+        .macro-header-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            opacity: 0.92;
+        }
+
+        .macro-header-count {
+            margin-left: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            opacity: 0.75;
+            font-weight: 500;
+        }
+
+        /* colour variants */
+        .macro-qualidade   { background: #10B98118; border-left: 3px solid #10B981; }
+        .macro-qualidade   .macro-header-label { color: #10B981; }
+        .macro-pessoal     { background: #F9731618; border-left: 3px solid #F97316; }
+        .macro-pessoal     .macro-header-label { color: #F97316; }
+        .macro-profissional{ background: #38BDF818; border-left: 3px solid #38BDF8; }
+        .macro-profissional .macro-header-label { color: #38BDF8; }
+        .macro-relacionamentos { background: #EC489918; border-left: 3px solid #EC4899; }
+        .macro-relacionamentos .macro-header-label { color: #EC4899; }
+
+        .macro-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            padding: 12px;
+            border-radius: 0 0 10px 10px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-top: none;
+            background: rgba(255,255,255,0.015);
+        }
+
+        /* ── Sub-area card  ── */
+        .area-card {
+            background: var(--surface, #1e1e2e);
+            border-radius: 8px;
+            padding: 14px 16px;
+            border-left: 4px solid transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .area-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        .area-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .area-card-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main, #e2e8f0);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .record-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .btn-icon-only {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            opacity: 0.45;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: opacity 0.15s, background 0.15s;
+        }
+
+        .btn-icon-only:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .area-card-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted, #94a3b8);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .area-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            font-size: 0.74rem;
+            font-family: 'Fira Code', monospace;
+            color: var(--text-muted, #94a3b8);
+        }
+
+        /* add-card placeholder */
+        .area-add-card {
+            border: 2px dashed rgba(255,255,255,0.12);
+            border-left: 2px dashed rgba(255,255,255,0.12) !important;
+            background: transparent !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.82rem;
+            font-family: 'Inter', sans-serif;
+            min-height: 80px;
+            transition: border-color 0.15s, color 0.15s;
+        }
+
+        .area-add-card:hover {
+            border-color: rgba(255,255,255,0.3);
+            color: var(--text-main, #e2e8f0);
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* weight summary card ── reuse .card if it exists in beeplanner.css */
+        .summary-card {
+            margin-top: 28px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <header class="header">
+            <div class="header-brand">
+                <div class="header-logo"></div>
+                <div class="header-titles">
+                    <h1>BeePlanner</h1>
+                    <p>"O que não é medido não é gerenciado."</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div id="data-extenso">—</div>
+                <div style="color: var(--primary);" id="data-dia-semana">—</div>
+            </div>
+        </header>
+
+        <nav class="tabs-nav">
+            <a class="tab-btn" href="dashboard.html">
+                <span class="tab-icon">📊</span><span class="tab-label">Dashboard</span>
+            </a>
+            <a class="tab-btn" href="metas.html">
+                <span class="tab-icon">🎯</span><span class="tab-label">Metas</span>
+            </a>
+            <a class="tab-btn" href="tarefas.html">
+                <span class="tab-icon">✅</span><span class="tab-label">Tarefas</span>
+            </a>
+            <a class="tab-btn active" href="roda-da-vida.html">
+                <span class="tab-icon">🧭</span><span class="tab-label">Roda da Vida</span>
+            </a>
+        </nav>
+
+        <section class="dashboard-view">
+
+            <div class="view-header">
+                <div>
+                    <h2>Áreas da Roda da Vida</h2>
+                    <p>Configure os quadrantes do radar e o peso de cada um no cálculo da Média de Rumo global.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modal-nova-area')">
+                    <span>+</span> Nova Área
+                </button>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 MACRO 1 — QUALIDADE DE VIDA
+            ══════════════════════════════════════ -->
+            <div class="macro-group">
+                <div class="macro-header macro-qualidade">
+                    <span class="macro-header-icon">🌿</span>
+                    <span class="macro-header-label">Qualidade de Vida</span>
+                    <span class="macro-header-count">3 áreas · peso 25%</span>
+                </div>
+                <div class="macro-body">
+
+                    <div class="area-card" style="border-left-color:#10B981;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">🎨 Criatividade e Hobbies</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Atividades de lazer, hobbies, diversão e expressão criativa.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">8%</strong></span>
+                            <span>5 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card" style="border-left-color:#10B981;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">✨ Plenitude e Felicidade</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Bem-estar subjetivo, satisfação com a vida e senso de alegria.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">9%</strong></span>
+                            <span>4 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card" style="border-left-color:#10B981;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">🙏 Espiritualidade</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Fé, meditação, propósito existencial e conexão com algo maior.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">8%</strong></span>
+                            <span>3 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card area-add-card" onclick="openModal('modal-nova-area')">
+                        <span>+ Adicionar área</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 MACRO 2 — PESSOAL
+            ══════════════════════════════════════ -->
+            <div class="macro-group">
+                <div class="macro-header macro-pessoal">
+                    <span class="macro-header-icon">🧠</span>
+                    <span class="macro-header-label">Pessoal</span>
+                    <span class="macro-header-count">3 áreas · peso 25%</span>
+                </div>
+                <div class="macro-body">
+
+                    <div class="area-card" style="border-left-color:#F97316;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">💪 Saúde e Disposição</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Exercício, alimentação, sono e vitalidade física.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">9%</strong></span>
+                            <span>7 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card" style="border-left-color:#F97316;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">📚 Desenvolvimento Intelectual</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Leitura, idiomas, cursos e aprendizado contínuo.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">8%</strong></span>
+                            <span>6 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card" style="border-left-color:#F97316;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">🧘 Equilíbrio Emocional</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Autoconhecimento, saúde mental, gestão das emoções.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">8%</strong></span>
+                            <span>5 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card area-add-card" onclick="openModal('modal-nova-area')">
+                        <span>+ Adicionar área</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 MACRO 3 — PROFISSIONAL
+            ══════════════════════════════════════ -->
+            <div class="macro-group">
+                <div class="macro-header macro-profissional">
+                    <span class="macro-header-icon">🐝</span>
+                    <span class="macro-header-label">Profissional</span>
+                    <span class="macro-header-count">3 áreas · peso 25%</span>
+                </div>
+                <div class="macro-body">
+
+                    <div class="area-card" style="border-left-color:#38BDF8;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">🚀 Realização e Propósito</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Carreira, vocação, impacto profissional e senso de missão.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">9%</strong></span>
+                            <span>8 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card" style="border-left-color:#38BDF8;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">💰 Recursos Financeiros</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Renda, investimentos, patrimônio e segurança financeira.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">8%</strong></span>
+                            <span>6 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card" style="border-left-color:#38BDF8;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">🌍 Contribuição Social</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Impacto na comunidade, voluntariado e legado profissional.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">8%</strong></span>
+                            <span>4 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card area-add-card" onclick="openModal('modal-nova-area')">
+                        <span>+ Adicionar área</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 MACRO 4 — RELACIONAMENTOS
+            ══════════════════════════════════════ -->
+            <div class="macro-group">
+                <div class="macro-header macro-relacionamentos">
+                    <span class="macro-header-icon">❤️</span>
+                    <span class="macro-header-label">Relacionamentos</span>
+                    <span class="macro-header-count">3 áreas · peso 25%</span>
+                </div>
+                <div class="macro-body">
+
+                    <div class="area-card" style="border-left-color:#EC4899;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">🎉 Vida Social</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Amizades, rede de contatos e participação em grupos.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">8%</strong></span>
+                            <span>4 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card" style="border-left-color:#EC4899;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">💑 Desenvolvimento Amoroso</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Relacionamento conjugal, romance e vida afetiva a dois.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">9%</strong></span>
+                            <span>5 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card" style="border-left-color:#EC4899;">
+                        <div class="area-card-top">
+                            <span class="area-card-title">👨‍👩‍👧 Família</span>
+                            <div class="record-actions">
+                                <button class="btn-icon-only" title="Editar">✏️</button>
+                                <button class="btn-icon-only" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                        <p class="area-card-desc">Vínculos familiares, presença com filhos e pais.</p>
+                        <div class="area-card-footer">
+                            <span>Peso: <strong style="color:var(--text-main);">8%</strong></span>
+                            <span>6 metas</span>
+                        </div>
+                    </div>
+
+                    <div class="area-card area-add-card" onclick="openModal('modal-nova-area')">
+                        <span>+ Adicionar área</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════
+                 SOMA DOS PESOS
+            ══════════════════════════════════════ -->
+            <div class="card summary-card">
+                <h2 class="card-title" style="margin-bottom: 4px;">Soma dos Pesos</h2>
+                <div style="display:flex; align-items:center; gap: var(--sp-md);">
+                    <div class="progress-bar-bg" style="flex:1; height: 10px;">
+                        <div class="progress-bar-fill" style="width: 100%; background-color: var(--status-success);"></div>
+                    </div>
+                    <span class="record-stat" style="color: var(--status-success);">100% ✅</span>
+                </div>
+                <p class="card-subtitle">A soma dos pesos das áreas deve totalizar 100% para que o cálculo da Média de Rumo seja consistente.</p>
+            </div>
+
+        </section>
+    </div>
+
+    <button class="fab" title="Lançar Ata de Hoje" onclick="alert('Isto invocaria a interface Python ou modal de envio para o banco de dados.')">
+        +
+    </button>
+
+    <!-- Modal Nova Área -->
+    <div class="modal-overlay" id="modal-nova-area">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>🧭 Nova Área da Roda da Vida</h3>
+                <button class="modal-close" onclick="closeModal('modal-nova-area')">✕</button>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field full">
+                    <label for="area-nome">Nome da área</label>
+                    <input type="text" id="area-nome" placeholder="Ex: Espiritualidade">
+                </div>
+
+                <div class="form-field full">
+                    <label for="area-icone">Ícone (emoji)</label>
+                    <input type="text" id="area-icone" placeholder="Ex: 🙏" maxlength="2" style="max-width: 100px;">
+                </div>
+
+                <div class="form-field full">
+                    <label for="area-macro">Macroárea</label>
+                    <select id="area-macro">
+                        <option value="">Selecione uma macroárea...</option>
+                        <option value="qualidade">🌿 Qualidade de Vida</option>
+                        <option value="pessoal">🧠 Pessoal</option>
+                        <option value="profissional">🐝 Profissional</option>
+                        <option value="relacionamentos">❤️ Relacionamentos</option>
+                    </select>
+                </div>
+
+                <div class="form-field full">
+                    <label for="area-desc">Descrição <span class="hint">(opcional)</span></label>
+                    <textarea id="area-desc" placeholder="O que essa área representa na sua Roda da Vida..."></textarea>
+                </div>
+
+                <div class="form-field">
+                    <label for="area-peso">Peso no radar global</label>
+                    <div class="slider-row">
+                        <input type="range" id="area-peso" min="0" max="100" value="8" oninput="document.getElementById('peso-valor').innerText = this.value + '%'">
+                        <span class="slider-value" id="peso-valor">8%</span>
+                    </div>
+                </div>
+
+                <div class="form-field full">
+                    <label>Cor de identificação</label>
+                    <div class="color-picker">
+                        <div class="color-swatch selected" style="background:#38BDF8;"></div>
+                        <div class="color-swatch" style="background:#10B981;"></div>
+                        <div class="color-swatch" style="background:#F97316;"></div>
+                        <div class="color-swatch" style="background:#EC4899;"></div>
+                        <div class="color-swatch" style="background:#A78BFA;"></div>
+                        <div class="color-swatch" style="background:#FBBF24;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('modal-nova-area')">Cancelar</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-nova-area'); showToast('Área adicionada à Roda da Vida!')">Salvar Área</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="beeplanner.js"></script>
+</body>
+</html>
