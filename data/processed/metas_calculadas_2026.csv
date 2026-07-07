@@ -1,21 +1,21 @@
 Meta,Categoria,Roda da vida,Frequência,Week/day/month,total_dias_100,alvo_75_percent
 Aprimorar uma habilidade,career (TimeIsMoney),,2 Semanal,,104,78
 Emotional check,spirit and soul (Mood+Time),Equilíbrio Emocional,1 Diária,Todo dia,365,274
-  Guardar dinheiro ,Financeira,Recursos Financeiros,3 Mensal,10° dia útil,12,9
+Guardar dinheiro ,Financeira,Recursos Financeiros,3 Mensal,10° dia útil,12,9
 "Participar de reunião, evento ou projetos",career (TimeIsMoney),,3 Mensal,1° Sunday,52,39
 Revisar performance,career (TimeIsMoney),,3 Mensal,1° Sunday,52,39
- Quitar dívidas     ,Financeira,,3 Mensal,10° dia útil,12,9
- Reduzir gastos supérfluos,Financeira,Recursos Financeiros,2 Semanal,,104,78
+Quitar dívidas,Financeira,,3 Mensal,10° dia útil,12,9
+Reduzir gastos supérfluos,Financeira,Recursos Financeiros,2 Semanal,,104,78
 30 min de  Exercício físico,motor (Health),Saúde e Disposição,1 Diária,Todo dia,365,274
- Avaliar evolução  ,Financeira,,3 Mensal,1° Sunday,52,39
+Avaliar evolução,Financeira,,3 Mensal,1° Sunday,52,39
 Estudar um tema específico,study (Mood+Money),Intelectual,1 Diária,Todo dia,365,274
 Dar ideias ou liderar algo,career (TimeIsMoney),,3 Mensal,1° Sunday,52,39
 Definir 1 objetivo profissional,career (TimeIsMoney),Realização e Propósito,4 Trimestral,1° Sunday,52,39
 Acompanhar evolução ,study (Mood+Money),,2 Semanal,,104,78
- Planejamento financeiro ,Financeira,Recursos Financeiros,3 Mensal,1° dia útil,12,9
+Planejamento financeiro ,Financeira,Recursos Financeiros,3 Mensal,1° dia útil,12,9
 Sono regulado - 8h de 22h às 6h,mental (Health),Saúde e Disposição,1 Diária,Todo dia,365,274
-Estudo em dupla  ,study (Mood+Money),,2 Semanal,,104,78
-Hidratação            ,mental (Health),,1 Diária,Todo dia,365,274
+Estudo em dupla,study (Mood+Money),,2 Semanal,,104,78
+Hidratação,mental (Health),,1 Diária,Todo dia,365,274
 Um livro por mês,Connection and Peace,Intelectual,3 Mensal,1° Sunday,52,39
 Um módulo da semana,career (TimeIsMoney),,2 Semanal,"Sunday, Thursday, Tuesday",157,118
 Viajar uma vez por ano,Connection and Peace,Criatividade Hobbies e Diversão,6 Anual,"March, September",1,1
