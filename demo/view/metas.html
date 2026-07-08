@@ -61,10 +61,10 @@
                         <input type="text" placeholder="Buscar meta por nome...">
                     </div>
                     <button class="filter-chip active">Todas (6)</button>
-                    <button class="filter-chip">🐝 Profissional</button>
-                    <button class="filter-chip">❤️ Relacionamentos</button>
-                    <button class="filter-chip">🧘 Qualidade de Vida</button>
-                    <button class="filter-chip">📚 Pessoal</button>
+                    <button class="filter-chip">Diária</button>
+                    <button class="filter-chip">Semanal</button>
+                    <button class="filter-chip">Mensal</button>
+                    <button class="filter-chip">📚 Saúde</button>
                 </div>
 
                 <div class="record-list">
@@ -72,7 +72,7 @@
                         <span class="record-color-dot" style="background-color:#EF4444;"></span>
                         <div class="record-main">
                             <span class="record-title">Ler 1 capítulo da Bíblia</span>
-                            <span class="record-meta">📚 Pessoal · Diária · 365 ocorrências/ano</span>
+                            <span class="record-meta">📚 Saúde · Diária · 365 ocorrências/ano</span>
                         </div>
                         <span class="record-stat" style="color: var(--status-low);">45% / 75%</span>
                         <div class="record-actions">
@@ -98,7 +98,7 @@
                         <span class="record-color-dot" style="background-color:#F97316;"></span>
                         <div class="record-main">
                             <span class="record-title">Podcast in English</span>
-                            <span class="record-meta">📚 Pessoal · Ter / Qui · 105 ocorrências/ano</span>
+                            <span class="record-meta">📚 Saúde · Ter / Qui · 105 ocorrências/ano</span>
                         </div>
                         <span class="record-stat" style="color: var(--status-attention);">72% / 75%</span>
                         <div class="record-actions">
@@ -124,7 +124,7 @@
                         <span class="record-color-dot" style="background-color:#10B981;"></span>
                         <div class="record-main">
                             <span class="record-title">Ligar para os pais</span>
-                            <span class="record-meta">❤️ Relacionamentos · Semanal (Domingo) · 52 ocorrências/ano</span>
+                            <span class="record-meta">❤️ Vida Social · Semanal (Domingo) · 52 ocorrências/ano</span>
                         </div>
                         <span class="record-stat" style="color: var(--status-success);">88% / 75%</span>
                         <div class="record-actions">
@@ -177,9 +177,14 @@
                     <label for="meta-area">Área da Roda da Vida</label>
                     <select id="meta-area">
                         <option>🐝 Profissional</option>
-                        <option>❤️ Relacionamentos</option>
+                        <option>❤️ Vida Social</option>
                         <option selected>🧘 Qualidade de Vida</option>
-                        <option>📚 Pessoal</option>
+                        <option>📚 Saúde</option>
+                        <option>💰 Financeiro</option>
+                        <option>Desenvolvimento Intelectual</option>
+                        <option>Lazer e Hobbies</option>
+                        <option>Alimentação</option>
+                        <option>Espiritualidade</option>
                     </select>
                 </div>
 
@@ -204,6 +209,15 @@
                         <div class="weekday-chip selected" data-day="sex">SEX</div>
                         <div class="weekday-chip" data-day="sab">SAB</div>
                     </div>
+                </div>
+
+                <div class="form-field full" id="campo-fixo-mes" style="display:none;">
+                    <label>Dia fixo da semana, número ou dia útil</label>
+                    <select id="meta-dia-mes">
+                        <option value="8" selected>8º dia do mês</option>
+                        <option value="1W">1º quarta-feira do mês</option>
+                        <option value="5W">5º quarta-feira do mês</option>
+                    </select>
                 </div>
 
                 <div class="form-field">
@@ -253,6 +267,15 @@
             const campo = document.getElementById('campo-dias-semana');
             campo.style.display = (tipo === 'semanal') ? 'flex' : 'none';
         }
+
+        // --- Específico desta página: mostrar/esconder dia do mês conforme o tipo de frequência ---
+        function toggleFrequencyFields(tipo) {
+            const campoDiasSemana = document.getElementById('campo-dias-semana');
+            const campoDiaMes = document.getElementById('campo-fixo-mes');
+            campoDiasSemana.style.display = (tipo === 'semanal') ? 'flex' : 'none';
+            campoDiaMes.style.display = (tipo === 'mensal' || tipo === 'dia_util') ? 'block' : 'none';
+        }
+
     </script>
 
 </body>
