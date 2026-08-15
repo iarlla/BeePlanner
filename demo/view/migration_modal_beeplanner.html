@@ -1,0 +1,530 @@
+
+<style>
+  :root {
+    --bee-bg: #0F172A;
+    --bee-card: #1E293B;
+    --bee-border: #334155;
+    --bee-primary: #FBBF24;
+    --bee-primary-hover: #F59E0B;
+    --bee-text: #F8FAFC;
+    --bee-muted: #94A3B8;
+    --bee-success: #10B981;
+    --bee-danger: #EF4444;
+    --bee-danger-bg: rgba(239,68,68,0.1);
+    --bee-warn-bg: rgba(251,191,36,0.1);
+    --bee-warn-border: rgba(251,191,36,0.35);
+    --bee-overlay: rgba(15,23,42,0.82);
+    --font-ui: 'Inter', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+  .faux-viewport {
+    background: var(--bee-bg);
+    min-height: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border-radius: 12px;
+    font-family: var(--font-ui);
+  }
+
+  .modal-box {
+    background: var(--bee-card);
+    border: 1px solid var(--bee-border);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .modal-top-bar {
+    background: linear-gradient(135deg, #1a2744 0%, #1E293B 100%);
+    border-bottom: 1px solid var(--bee-border);
+    padding: 20px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .modal-icon-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .modal-bee-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--bee-warn-bg);
+    border: 1px solid var(--bee-warn-border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--bee-text);
+    line-height: 1.3;
+  }
+
+  .modal-subtitle {
+    font-size: 12px;
+    color: var(--bee-primary);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+
+  .modal-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--bee-muted);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+  .modal-close-btn:hover { color: var(--bee-text); }
+
+  .shape-change-viz {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(15,23,42,0.4);
+    border-radius: 8px;
+    border: 1px solid var(--bee-border);
+  }
+
+  .shape-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+  }
+
+  .shape-from {
+    background: rgba(249,115,22,0.15);
+    border: 1px solid rgba(249,115,22,0.4);
+    color: #F97316;
+  }
+
+  .shape-to {
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(16,185,129,0.4);
+    color: #10B981;
+  }
+
+  .shape-arrow {
+    color: var(--bee-muted);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .shape-desc {
+    font-size: 11px;
+    color: var(--bee-muted);
+    margin-left: auto;
+    font-family: var(--font-mono);
+  }
+
+  .modal-body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .modal-description {
+    font-size: 13px;
+    color: var(--bee-muted);
+    line-height: 1.6;
+    padding: 10px 12px;
+    background: var(--bee-warn-bg);
+    border: 1px solid var(--bee-warn-border);
+    border-radius: 8px;
+    border-left: 3px solid var(--bee-primary);
+  }
+
+  .mapping-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--bee-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-family: var(--font-mono);
+  }
+
+  .mapping-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mapping-row {
+    display: grid;
+    grid-template-columns: 1fr 28px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(15,23,42,0.45);
+    border: 1px solid var(--bee-border);
+    border-radius: 10px;
+    transition: border-color 0.15s;
+  }
+
+  .mapping-row:hover { border-color: rgba(251,191,36,0.3); }
+
+  .mapping-row.error { border-color: rgba(239,68,68,0.5); background: var(--bee-danger-bg); }
+
+  .area-from {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .area-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .area-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--bee-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .area-meta {
+    font-size: 11px;
+    color: var(--bee-muted);
+    font-family: var(--font-mono);
+  }
+
+  .map-arrow {
+    text-align: center;
+    color: var(--bee-muted);
+    font-size: 14px;
+  }
+
+  .map-select {
+    background: var(--bee-bg);
+    border: 1px solid var(--bee-border);
+    color: var(--bee-text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 28px;
+  }
+
+  .map-select:hover, .map-select:focus { border-color: var(--bee-primary); }
+  .map-select.selected { border-color: rgba(16,185,129,0.5); color: #10B981; }
+  .map-select option { background: #1E293B; color: #F8FAFC; }
+
+  .validation-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    transition: all 0.2s;
+  }
+
+  .validation-strip.pending {
+    background: rgba(148,163,184,0.08);
+    border: 1px solid var(--bee-border);
+    color: var(--bee-muted);
+  }
+
+  .validation-strip.ok {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.35);
+    color: #10B981;
+  }
+
+  .validation-strip.fail {
+    background: var(--bee-danger-bg);
+    border: 1px solid rgba(239,68,68,0.35);
+    color: var(--bee-danger);
+  }
+
+  .modal-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--bee-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    background: rgba(15,23,42,0.3);
+  }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-ui);
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--bee-border);
+    color: var(--bee-muted);
+  }
+  .btn-ghost:hover { color: var(--bee-text); border-color: var(--bee-muted); }
+
+  .btn-primary {
+    background: var(--bee-primary);
+    color: #0F172A;
+  }
+  .btn-primary:hover { background: var(--bee-primary-hover); transform: translateY(-1px); }
+  .btn-primary:disabled {
+    background: #374151;
+    color: #6B7280;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .progress-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-right: auto;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--bee-border);
+  }
+  .dot.active { background: var(--bee-primary); }
+  .dot.done { background: var(--bee-success); }
+
+  .meta-count {
+    font-size: 11px;
+    color: var(--bee-muted);
+    font-family: var(--font-mono);
+  }
+
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    background: rgba(239,68,68,0.15);
+    color: #EF4444;
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+</style>
+
+<h2 class="sr-only">Modal de migração da Roda da Vida — reconfiguração de formato e redistribuição de metas</h2>
+
+<div class="faux-viewport">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <div class="modal-top-bar">
+      <div class="modal-header-row">
+        <div class="modal-icon-title">
+          <div class="modal-bee-icon" aria-hidden="true">🐝</div>
+          <div>
+            <div class="modal-title" id="modal-title">Sua colmeia está mudando de forma!</div>
+            <div class="modal-subtitle">migração de formato · roda da vida</div>
+          </div>
+        </div>
+        <button class="modal-close-btn" aria-label="Fechar modal" onclick="this.closest('.modal-box').style.opacity='0.4'">✕</button>
+      </div>
+
+      <div class="shape-change-viz">
+        <div class="shape-pill shape-from">
+          <span>⬡</span>
+          <span>Hexágono</span>
+          <span class="meta-count">6 eixos</span>
+        </div>
+        <span class="shape-arrow">→</span>
+        <div class="shape-pill shape-to">
+          <span>△</span>
+          <span>Triângulo</span>
+          <span class="meta-count">3 eixos</span>
+        </div>
+        <span class="shape-desc">−3 áreas</span>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-description">
+        Você está reduzindo o número de áreas. Para não perder o progresso das suas metas, por favor, indique para onde devemos movê-las:
+      </p>
+
+      <div class="mapping-section-label">áreas que serão removidas → novo destino</div>
+
+      <div class="mapping-list" id="mapping-list">
+
+        <div class="mapping-row" id="row-financas">
+          <div class="area-from">
+            <div class="area-dot" style="background:#F97316"></div>
+            <div>
+              <div class="area-name">💰 Finanças</div>
+              <div class="area-meta">
+                <span class="count-badge">6 metas</span>
+              </div>
+            </div>
+          </div>
+          <div class="map-arrow" aria-hidden="true">→</div>
+          <select class="map-select" id="sel-financas" aria-label="Mover metas de Finanças para" onchange="handleSelect(this, 'row-financas')">
+            <option value="">Selecione...</option>
+            <option value="tempo">⏱ Tempo</option>
+            <option value="disposicao">⚡ Disposição</option>
+            <option value="conexao">🔗 Conexão</option>
+          </select>
+        </div>
+
+        <div class="mapping-row" id="row-trabalho">
+          <div class="area-from">
+            <div class="area-dot" style="background:#38BDF8"></div>
+            <div>
+              <div class="area-name">💼 Trabalho</div>
+              <div class="area-meta">
+                <span class="count-badge">8 metas</span>
+              </div>
+            </div>
+          </div>
+          <div class="map-arrow" aria-hidden="true">→</div>
+          <select class="map-select" id="sel-trabalho" aria-label="Mover metas de Trabalho para" onchange="handleSelect(this, 'row-trabalho')">
+            <option value="">Selecione...</option>
+            <option value="tempo">⏱ Tempo</option>
+            <option value="disposicao">⚡ Disposição</option>
+            <option value="conexao">🔗 Conexão</option>
+          </select>
+        </div>
+
+        <div class="mapping-row" id="row-lazer">
+          <div class="area-from">
+            <div class="area-dot" style="background:#EC4899"></div>
+            <div>
+              <div class="area-name">🎨 Lazer</div>
+              <div class="area-meta">
+                <span class="count-badge">4 metas</span>
+              </div>
+            </div>
+          </div>
+          <div class="map-arrow" aria-hidden="true">→</div>
+          <select class="map-select" id="sel-lazer" aria-label="Mover metas de Lazer para" onchange="handleSelect(this, 'row-lazer')">
+            <option value="">Selecione...</option>
+            <option value="tempo">⏱ Tempo</option>
+            <option value="disposicao">⚡ Disposição</option>
+            <option value="conexao">🔗 Conexão</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="validation-strip pending" id="validation-strip">
+        <span id="val-icon">◌</span>
+        <span id="val-text">Mapeie todas as áreas para continuar</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="progress-dots" aria-label="Etapa 1 de 2">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+      </div>
+      <button class="btn btn-ghost" onclick="sendPrompt('Cancelar migração da Roda da Vida e manter o formato Hexágono')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-confirm" disabled onclick="confirmar()">Confirmar migração →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const selIds = ['sel-financas', 'sel-trabalho', 'sel-lazer'];
+  const rowIds = ['row-financas', 'row-trabalho', 'row-lazer'];
+
+  function handleSelect(sel, rowId) {
+    sel.classList.toggle('selected', sel.value !== '');
+    validateAll();
+  }
+
+  function validateAll() {
+    const allDone = selIds.every(id => document.getElementById(id).value !== '');
+    const strip = document.getElementById('validation-strip');
+    const icon = document.getElementById('val-icon');
+    const txt = document.getElementById('val-text');
+    const btn = document.getElementById('btn-confirm');
+
+    const done = selIds.filter(id => document.getElementById(id).value !== '').length;
+    const total = selIds.length;
+
+    if (allDone) {
+      strip.className = 'validation-strip ok';
+      icon.textContent = '✓';
+      txt.textContent = 'Tudo mapeado — 18 metas preservadas. Pronto para migrar!';
+      btn.disabled = false;
+    } else {
+      strip.className = 'validation-strip pending';
+      icon.textContent = '◌';
+      txt.textContent = `${done} de ${total} áreas mapeadas — selecione todas para continuar`;
+      btn.disabled = true;
+    }
+  }
+
+  function confirmar() {
+    const mapeamentos = selIds.map((id, i) => {
+      const areaNames = ['Finanças', 'Trabalho', 'Lazer'];
+      const destinos = {tempo: 'Tempo', disposicao: 'Disposição', conexao: 'Conexão'};
+      const val = document.getElementById(id).value;
+      return `${areaNames[i]} → ${destinos[val]}`;
+    }).join(', ');
+    sendPrompt(`Confirmar migração da Roda da Vida: Hexágono → Triângulo. Mapeamentos: ${mapeamentos}. Migrar 18 metas preservando o progresso.`);
+  }
+</script>
