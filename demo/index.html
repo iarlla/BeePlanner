@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeePlanner - Engenharia de Vida & Produtividade</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --bg-body: #0B1120;
+            --bg-card: #1E293B;
+            --bg-card-hover: #27354F;
+            --primary: #FBBF24;
+            --primary-hover: #F59E0B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --border-color: #334155;
+            --accent-blue: #38BDF8;
+            --accent-green: #10B981;
+            --accent-purple: #A78BFA;
+            --font-ui: 'Inter', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            --sp-sm: 8px;
+            --sp-md: 16px;
+            --sp-lg: 24px;
+            --sp-xl: 48px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER & NAVBAR --- */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(11, 17, 32, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--sp-md) var(--sp-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
+            font-size: 20px;
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text span {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #0F172A;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px var(--sp-lg) 60px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: var(--sp-lg);
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: var(--sp-md);
+            letter-spacing: -1px;
+        }
+
+        .hero h2 span {
+            background: linear-gradient(135deg, var(--primary) 0%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto var(--sp-xl);
+        }
+
+        /* --- CONTAINER GERAL --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--sp-lg) 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 80px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--sp-xl);
+        }
+
+        .section-title h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* --- QUEM SOMOS --- */
+        .about-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-content h4 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        .about-content p {
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .methodology-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .methodology-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .methodology-item span {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .about-quote {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 4px solid var(--primary);
+            padding: 24px;
+            border-radius: 0 12px 12px 0;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: #E2E8F0;
+        }
+
+        /* --- DICIONÁRIO DE ENTIDADES (GRID) --- */
+        .dictionary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .dict-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .dict-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            background: var(--bg-card-hover);
+        }
+
+        .dict-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dict-badge {
+            font-size: 12px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--text-muted);
+        }
+
+        .dict-icon-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dict-icon-title .icon {
+            font-size: 24px;
+        }
+
+        .dict-icon-title h4 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .dict-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            flex-grow: 1;
+        }
+
+        .dict-attributes {
+            background: rgba(11, 17, 32, 0.6);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: #CBD5E1;
+            border: 1px solid rgba(51, 65, 85, 0.6);
+        }
+
+        .dict-attributes strong {
+            color: var(--primary);
+        }
+
+        /* --- MODAL DE AUTENTICAÇÃO --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 17, 32, 0.8);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            padding: 32px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .auth-tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-family: var(--font-ui);
+        }
+
+        .auth-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            padding: 30px var(--sp-lg);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 32px; }
+            .about-card { grid-template-columns: 1fr; }
+            .dictionary-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CABEÇALHO -->
+    <header>
+        <div class="nav-container">
+            <a href="#" class="brand">
+                <div class="brand-logo">🐝</div>
+                <div class="brand-text">
+                    <h1>Bee<span>Planner</span></h1>
+                </div>
+            </a>
+            
+            <div class="nav-actions">
+                <button class="btn btn-outline" onclick="openAuthModal('login')">Entrar</button>
+                <button class="btn btn-primary" onclick="openAuthModal('register')">Registrar</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">⚡ Life Engineering</div>
+        <h2>O que não é medido, <span>não é gerenciado.</span></h2>
+        <p>Uma plataforma desenhada sob a metodologia da Roda da Vida, integrando metas anuais com metas de 75%, rotinas cíclicas, tarefas acionáveis e rastreamento contínuo.</p>
+        <div class="nav-actions" style="justify-content: center;">
+            <button class="btn btn-primary" onclick="openAuthModal('register')">Começar Agora</button>
+            <a href="#dicionario-entidades" class="btn btn-outline">Ver Dicionário de Entidades</a>
+            <a href="#dicionario-visualizacoes" class="btn btn-outline">Ver Dicionário de Visualizações</a>
+
+        </div>
+    </section>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="container">
+
+        <!-- QUEM SOMOS -->
+        <section id="sobre">
+            <div class="about-card">
+                <div class="about-content">
+                    <h4>Quem Somos</h4>
+                    <p>O <strong>BeePlanner</strong> é um ecossistema de produtividade e engenharia de vida construído para transformar intenções abstratas em execuções mensuráveis.</p>
+                    <p>Apoiado na arquitetura da Roda da Vida com polígonos dinâmicos (de 3 a 12 eixos), permitimos que você equilibre todas as áreas da sua vida de forma conectada e consistente.</p>
+                    <div class="methodology-list">
+                        <div class="methodology-item">
+                            <span>🎯</span>
+                            <div><strong>Meta de 75%:</strong> Foco no cumprimento consistente do plano anual sem sobrecarga irrealista.</div>
+                        </div>
+                        <div class="methodology-item">
+                            <span>📊</span>
+                            <div><strong>Roda Dinâmica:</strong> Visualização poligonal que se adapta sem perda de integridade de dados.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-quote">
+                    <code>
+                        // Filosofia BeePlanner<br>
+                        IF meta.executada_hoje == True THEN<br>
+                        &nbsp;&nbsp;progresso += 1<br>
+                        &nbsp;&nbsp;streak_atual++<br>
+                        &nbsp;&nbsp;vida.balanceamento = OTIMIZADO<br>
+                        END IF
+                    </code>
+                </div>
+            </div>
+        </section>
+
+        <!-- DICIONÁRIO DE ENTIDADES -->
+        <section id="dicionario-entidades">
+            <div class="section-title">
+                <h3>Dicionário de Entidades</h3>
+                <p>Estrutura semântica e técnica do modelo de dados da plataforma</p>
+            </div>
+
+            <div class="dictionary-grid">
+                
+                <!-- Meta -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">🎯</span>
+                            <h4>Meta (Goal)</h4>
+                        </div>
+                        <span class="dict-badge">dim_metas</span>
+                    </div>
+                    <p class="dict-desc">Focada em progresso, prazos de longo prazo e métricas de sucesso (ex: "Fluência em Inglês").</p>
+                    <div class="dict-attributes">
+                        <strong>Atributos:</strong> id, titulo, descricao, tipo_metrica, valor_alvo, valor_atual, data_limite, status
+                    </div>
+                </div>
+
+                <!-- Rotina -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">🔄</span>
+                            <h4>Rotina (Routine)</h4>
+                        </div>
+                        <span class="dict-badge">rotinas</span>
+                    </div>
+                    <p class="dict-desc">Focada em recorrência, hábitos e dias da semana. Não tem data de conclusão única pois é cíclica.</p>
+                    <div class="dict-attributes">
+                        <strong>Atributos:</strong> id, nome, frequencia, dias_da_semana, horario_sugerido, streak_atual, meta_id (FK)
+                    </div>
+                </div>
+
+                <!-- Tarefa -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">✅</span>
+                            <h4>Tarefas (Task)</h4>
+                        </div>
+                        <span class="dict-badge">tarefas</span>
+                    </div>
+                    <p class="dict-desc">Focada em execução única, checklist pontual e estado de conclusão ("fazer" ou "feito").</p>
+                    <div class="dict-attributes">
+                        <strong>Atributos:</strong> id, titulo, prioridade, status, data_vencimento, concluida_em, meta_id (FK)
+                    </div>
+                </div>
+
+                <!-- Evento -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">📅</span>
+                            <h4>Eventos (Event)</h4>
+                        </div>
+                        <span class="dict-badge">eventos</span>
+                    </div>
+                    <p class="dict-desc">Focado estritamente em cronologia, ocupação de tempo e sincronização com calendários.</p>
+                    <div class="dict-attributes">
+                        <strong>Atributos:</strong> id, titulo, data_hora_inicio, data_hora_fim, localizacao, participantes, agenda_id (FK)
+                    </div>
+                </div>
+
+                <!-- Agenda -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">🗂️</span>
+                            <h4>Agenda (Calendar)</h4>
+                        </div>
+                        <span class="dict-badge">agendas</span>
+                    </div>
+                    <p class="dict-desc">Funciona como um contêiner, agrupador ou contexto para organizar eventos e tarefas.</p>
+                    <div class="dict-attributes">
+                        <strong>Atributos:</strong> id, nome, cor_hex, is_visivel, is_compartilhada, usuario_id (FK)
+                    </div>
+                </div>
+
+                <!-- Hábitos -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">⚡</span>
+                            <h4>Hábitos (Habits)</h4>
+                        </div>
+                        <span class="dict-badge">fact_execucoes</span>
+                    </div>
+                    <p class="dict-desc">Comportamentos repetitivos para consolidar com histórico de validações e pontuação no radar.</p>
+                    <div class="dict-attributes">
+                        <strong>Atributos:</strong> id, meta_id (FK), data_conclusao, fonte_origem, rotina_id, frequencia, streak_atual, data_conclusao, meta_id (FK)
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- DICIONÁRIO DE VISUALIZAÇÕES -->
+        <section id="dicionario-visualizacoes">
+            <div class="section-title">
+                <h3>Dicionário de Visualizações</h3>
+                <p>Camadas visuais, interfaces analíticas e modos de exibição da plataforma</p>
+            </div>
+
+            <div class="dictionary-grid">
+                
+                <!-- Cronograma (Gantt / Timeline) -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">⏳</span>
+                            <h4>Cronograma (Timeline / Gantt)</h4>
+                        </div>
+                        <span class="dict-badge">view_cronograma</span>
+                    </div>
+                    <p class="dict-desc">Mapeamento linear de dependências, marcos temporais e duração estimada ao longo de uma linha contínua de tempo.</p>
+                    <div class="dict-attributes">
+                        <strong>Composição:</strong> escala_tempo (dia/semana/mês), barras_duracao, marcos_entrega, dependencias, entidades_vinculadas (metas/tarefas)
+                    </div>
+                </div>
+
+                <!-- Calendário -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">📆</span>
+                            <h4>Calendário (Calendar View)</h4>
+                        </div>
+                        <span class="dict-badge">view_calendario</span>
+                    </div>
+                    <p class="dict-desc">Exibição em grade temporal fixa (mês, semana ou dia) para alocação de compromissos pontuais e gestão de disponibilidade.</p>
+                    <div class="dict-attributes">
+                        <strong>Composição:</strong> modo_grade (mes/semana/dia), blocos_horario, eventos_dia_inteiro, sobreposicao, camadas_agendas
+                    </div>
+                </div>
+
+                <!-- Dashboard -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">📊</span>
+                            <h4>Dashboard (Analytics)</h4>
+                        </div>
+                        <span class="dict-badge">view_dashboard</span>
+                    </div>
+                    <p class="dict-desc">Painel agregador de KPIs, métricas de performance, progresso percentual e gráficos de evolução temporal.</p>
+                    <div class="dict-attributes">
+                        <strong>Composição:</strong> cards_kpi, graficos (linha/barra/pizza), taxa_conclusao, streaks_habitos, filtros_periodo
+                    </div>
+                </div>
+
+                <!-- Kanban -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">📋</span>
+                            <h4>Kanban (Board View)</h4>
+                        </div>
+                        <span class="dict-badge">view_kanban</span>
+                    </div>
+                    <p class="dict-desc">Fluxo de trabalho visual particionado por estágios operacionais (ex: A Fazer, Em Andamento, Concluído) com suporte a drag-and-drop.</p>
+                    <div class="dict-attributes">
+                        <strong>Composição:</strong> colunas_status, cards_tarefas, ordenacao_prioridade, limites_wip, filtros_etiquetas
+                    </div>
+                </div>
+
+                <!-- Mapa de Calor (Habit Heatmap) -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">🟩</span>
+                            <h4>Matriz de Hábitos (Heatmap)</h4>
+                        </div>
+                        <span class="dict-badge">view_heatmap</span>
+                    </div>
+                    <p class="dict-desc">Grade de densidade e consistência diária baseada em intensidade de cor para acompanhamento de rotinas e execuções.</p>
+                    <div class="dict-attributes">
+                        <strong>Composição:</strong> grade_anual/mensal, intensidade_cor, contagem_conclusoes_dia, sequencia_ativa (streak)
+                    </div>
+                </div>
+
+                <!-- Matriz de Decisão (Eisenhower) -->
+                <div class="dict-card">
+                    <div class="dict-header">
+                        <div class="dict-icon-title">
+                            <span class="icon">🧭</span>
+                            <h4>Matriz de Prioridade (Eisenhower)</h4>
+                        </div>
+                        <span class="dict-badge">view_matriz_prioridade</span>
+                    </div>
+                    <p class="dict-desc">Segmentação cartesiana de itens baseada em dois eixos (Urgência x Importância) para triagem rápida de ações.</p>
+                    <div class="dict-attributes">
+                        <strong>Composição:</strong> quadrantes (fazer/agendar/delegar/eliminar), coordenadas_eixos, cards_tarefas, tags_urgencia
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- MODAL AUTH -->
+    <div class="modal-overlay" id="authModal">
+        <div class="auth-card">
+            <button class="modal-close" onclick="closeAuthModal()">✕</button>
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Entrar</button>
+                <button class="auth-tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Cadastrar</button>
+            </div>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                <div class="form-group" id="groupName" style="display: none;">
+                    <label for="authName">Nome Completo</label>
+                    <input type="text" id="authName" placeholder="Seu nome">
+                </div>
+
+                <div class="form-group" style="margin-top: 12px;">
+                    <label for="authEmail">E-mail</label>
+                    <input type="email" id="authEmail" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group" style="margin-top: 12px;">
+                    <label for="authPassword">Senha</label>
+                    <input type="password" id="authPassword" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px; justify-content: center;" id="authSubmitBtn">
+                    Acessar Plataforma
+                </button>
+            </form>
+            <p style="text-align: center;">ou</p>
+            <div id="g_id_onload"
+                data-client_id="SEU_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                data-context="signin"
+                data-ux_mode="popup"
+                data-callback="handleCredentialResponse"
+                data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline"
+                data-text="signin_with"
+                data-size="large"
+                data-logo_alignment="left">
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>BeePlanner © 2026 — Life Engineering Dashboard. Arquitetura orientada a dados.</p>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        let currentAuthMode = 'login';
+
+        function openAuthModal(mode) {
+            currentAuthMode = mode;
+            document.getElementById('authModal').classList.add('active');
+            switchAuthTab(mode);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            const tabLogin = document.getElementById('tabLogin');
+            const tabRegister = document.getElementById('tabRegister');
+            const groupName = document.getElementById('groupName');
+            const submitBtn = document.getElementById('authSubmitBtn');
+
+            if (mode === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                groupName.style.display = 'none';
+                submitBtn.textContent = 'Acessar Plataforma';
+            } else {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                groupName.style.display = 'flex';
+                submitBtn.textContent = 'Criar Minha Conta';
+            }
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            alert(`Ação registrada: ${currentAuthMode.toUpperCase()} para o usuário ${email}`);
+            closeAuthModal();
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAuthModal();
+            }
+        });
+        
+        function handleCredentialResponse(response) {
+        // Token JWT contendo as credenciais do usuário
+        const idToken = response.credential;
+        
+        // Envie o idToken para o seu backend via POST para validar a sessão
+        fetch('/api/auth/google', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: idToken })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Login realizado com sucesso:', data);
+        })
+        .catch(err => {
+            console.error('Erro na autenticação:', err);
+        });
+        }
+    </script>
+</body>
+</html>
