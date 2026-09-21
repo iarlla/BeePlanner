@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>BeePlanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS — claro (padrão) / escuro (marca original BeePlanner)
+   ============================================================ */
+:root {
+  --bg-body: #F4F5F7;
+  --bg-card: #FFFFFF;
+  --bg-sunken: #EDEFF3;
+  --primary: #D97706;
+  --primary-hover: #B45309;
+  --primary-soft: rgba(217,119,6,0.10);
+  --text-main: #16181D;
+  --text-muted: #6B7280;
+  --border-color: #E2E4E9;
+  --status-success: #059669;
+  --status-success-bg: rgba(5,150,105,0.10);
+  --status-attention: #EA580C;
+  --status-attention-bg: rgba(234,88,12,0.10);
+  --status-low: #DC2626;
+  --status-low-bg: rgba(220,38,38,0.10);
+  --overlay: rgba(15,23,42,0.55);
+  --font-ui: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px; --sp-lg: 24px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { @dark-tokens; }
+}
+:root[data-theme="dark"] { @dark-tokens; }
+</style>
+<style id="dark-style-placeholder"></style>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: contain;
+}
+button, input, select, textarea { font-family: inherit; color: inherit; }
+::-webkit-scrollbar { width: 0; height: 0; }
+
+.app-shell { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---------- TOP BAR ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  padding: calc(var(--safe-top) + 14px) var(--sp-md) 12px;
+  background: var(--bg-body);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-sm);
+  border-bottom: 1px solid var(--border-color);
+}
+.topbar-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.topbar-logo {
+  width: 38px; height: 38px; border-radius: 11px; background: var(--bg-card);
+  border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center;
+  font-size: 19px; flex-shrink: 0;
+}
+.topbar-titles h1 { font-size: 17px; font-weight: 800; letter-spacing: -0.2px; }
+.topbar-titles p { font-size: 10.5px; color: var(--text-muted); font-family: var(--font-mono); }
+.topbar-theme-btn {
+  width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-color);
+  background: var(--bg-card); font-size: 15px; cursor: pointer; flex-shrink: 0;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ---------- VIEWS ---------- */
+main { flex: 1; padding: var(--sp-md) var(--sp-md) 100px; display: flex; flex-direction: column; gap: var(--sp-md); }
+.view { display: none; flex-direction: column; gap: var(--sp-md); animation: fadeIn .2s ease; }
+.view.active { display: flex; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to {opacity:1; transform:none;} }
+
+.view-header h2 { font-size: 19px; font-weight: 800; margin-bottom: 3px; }
+.view-header p { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;
+  padding: var(--sp-md); display: flex; flex-direction: column; gap: 10px;
+}
+.card-title { font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
+.card-subtitle { font-size: 12px; color: var(--text-muted); }
+
+/* KPI grid */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-sm); }
+.kpi-card { padding: 14px; gap: 4px; }
+.kpi-value { font-size: 26px; font-weight: 800; font-family: var(--font-mono); }
+.kpi-value.accent { color: var(--primary); }
+.kpi-row { flex-direction: row; align-items: center; justify-content: space-between; grid-column: 1 / -1; }
+
+.progress-ring { position: relative; width: 62px; height: 62px; border-radius: 50%; flex-shrink:0; }
+.progress-ring::after { content:''; position:absolute; inset:6px; background:var(--bg-card); border-radius:50%; }
+.progress-ring-val { position:relative; z-index:1; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:800; font-size:14px; }
+
+/* radar */
+.radar-wrapper { width: 100%; max-width: 260px; margin: 6px auto 0; aspect-ratio: 1/1; }
+svg.radar-chart { width:100%; height:100%; }
+.radar-grid { fill:none; stroke:var(--border-color); stroke-width:1; }
+.radar-axis { stroke:var(--border-color); stroke-width:1; stroke-dasharray:3; }
+.radar-target { fill:none; stroke:var(--primary); stroke-width:1.4; stroke-dasharray:4; }
+.radar-data { fill: rgba(5,150,105,0.18); stroke: var(--status-success); stroke-width:2; }
+.radar-text { fill: var(--text-muted); font-size: 10.5px; font-weight: 600; text-anchor: middle; font-family: var(--font-ui); }
+
+/* goal / critical list */
+.goal-item { background: var(--bg-sunken); border-radius: 12px; padding: 12px; display:flex; flex-direction:column; gap:6px; }
+.goal-top { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.goal-title { font-size: 13px; font-weight: 600; }
+.badge { padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+.badge.success { background: var(--status-success-bg); color: var(--status-success); }
+.badge.attention { background: var(--status-attention-bg); color: var(--status-attention); }
+.badge.low { background: var(--status-low-bg); color: var(--status-low); }
+.progress-bar-bg { width:100%; height:6px; background: var(--border-color); border-radius:3px; overflow:hidden; }
+.progress-bar-fill { height:100%; border-radius:3px; transition: width .3s ease; }
+.goal-metric { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted); }
+
+/* toolbar */
+.toolbar { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; }
+.toolbar::-webkit-scrollbar{display:none;}
+.search-field { position: relative; }
+.search-field input {
+  width:100%; padding: 10px 12px 10px 32px; border-radius: 10px; border:1px solid var(--border-color);
+  background: var(--bg-sunken); font-size: 13.5px; outline:none;
+}
+.search-field::before { content:'🔍'; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:12px; opacity:.55; }
+.chip {
+  flex-shrink:0; font-size: 12.5px; font-weight: 600; padding: 7px 13px; border-radius: 20px;
+  border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); cursor:pointer; white-space:nowrap;
+}
+.chip.active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+
+/* record list (tarefas / metas) */
+.record-list { display:flex; flex-direction:column; gap:8px; }
+.record-item {
+  background: var(--bg-card); border:1px solid var(--border-color); border-radius: 14px;
+  padding: 12px; display:flex; align-items:center; gap: 10px;
+}
+.record-checkbox { width: 21px; height: 21px; flex-shrink:0; accent-color: var(--status-success); border-radius:6px; }
+.record-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.record-main { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.record-title { font-size: 13.5px; font-weight: 600; }
+.record-title.done { text-decoration: line-through; color: var(--text-muted); }
+.record-meta { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.record-stat { font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; white-space:nowrap; flex-shrink:0; }
+.record-actions { display:flex; gap:2px; flex-shrink:0; }
+.icon-btn { background:none; border:none; font-size: 14px; padding:5px; border-radius:8px; cursor:pointer; opacity:.55; }
+.icon-btn:active { opacity:1; background: var(--bg-sunken); }
+
+.empty-state { text-align:center; padding: 34px 14px; color: var(--text-muted); font-size: 12.5px; }
+.empty-state .icon { font-size: 30px; display:block; margin-bottom: 8px; }
+
+/* macro groups (roda da vida) */
+.macro-group { display:flex; flex-direction:column; }
+.macro-header { display:flex; align-items:center; gap:8px; padding:9px 12px; border-radius:12px 12px 0 0; }
+.macro-header-label { font-size: 11.5px; font-weight: 800; letter-spacing:.06em; text-transform:uppercase; }
+.macro-header-count { margin-left:auto; font-size:10.5px; font-family: var(--font-mono); opacity:.75; }
+.macro-body { display:flex; flex-direction:column; gap:8px; padding:10px; border:1px solid var(--border-color); border-top:none; border-radius:0 0 12px 12px; }
+.area-card { background: var(--bg-sunken); border-radius: 10px; padding: 11px 13px; border-left: 4px solid var(--primary); display:flex; flex-direction:column; gap:4px; }
+.area-card-top { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.area-card-title { font-size: 13px; font-weight: 700; }
+.area-card-desc { font-size: 11px; color: var(--text-muted); line-height:1.4; }
+.area-card-footer { display:flex; justify-content:space-between; font-size: 10.5px; font-family: var(--font-mono); color: var(--text-muted); margin-top:2px; }
+.area-add-card { border: 1.5px dashed var(--border-color); background:transparent; display:flex; align-items:center; justify-content:center; min-height:46px; color:var(--text-muted); font-weight:600; font-size:12.5px; cursor:pointer; }
+
+/* forms */
+.form-grid { display:flex; flex-direction:column; gap: 13px; }
+.form-field { display:flex; flex-direction:column; gap: 5px; }
+.form-field label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.form-field .hint { font-weight:400; opacity:.75; }
+.form-field input[type=text], .form-field input[type=date], .form-field select, .form-field textarea {
+  width:100%; padding: 10px 12px; border-radius: 10px; border:1px solid var(--border-color);
+  background: var(--bg-sunken); font-size: 13.5px; outline:none;
+}
+.form-field textarea { min-height: 64px; resize: vertical; }
+.weekday-picker { display:flex; gap:6px; flex-wrap:wrap; }
+.weekday-chip {
+  width: 40px; height: 34px; border-radius: 9px; border: 1px solid var(--border-color); background: var(--bg-sunken);
+  font-family: var(--font-mono); font-size: 11px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.weekday-chip.selected { background: var(--primary); border-color: var(--primary); color:#fff; }
+.color-picker { display:flex; gap: 9px; flex-wrap:wrap; }
+.color-swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor:pointer; position:relative; }
+.color-swatch.selected { border-color: var(--text-main); }
+.color-swatch.selected::after { content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; text-shadow:0 0 2px rgba(0,0,0,.5); }
+.slider-row { display:flex; align-items:center; gap: 10px; }
+input[type=range] { flex:1; -webkit-appearance:none; height:5px; background: var(--border-color); border-radius:3px; outline:none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:17px; height:17px; border-radius:50%; background: var(--primary); cursor:pointer; border:3px solid var(--bg-card); box-shadow:0 0 0 1px var(--primary); }
+.slider-value { font-family: var(--font-mono); font-weight:700; color: var(--primary); font-size:13px; min-width:38px; text-align:right; }
+
+/* buttons */
+.btn { padding: 11px 18px; border-radius: 11px; font-size: 13.5px; font-weight: 700; border:none; cursor:pointer; }
+.btn-primary { background: var(--primary); color:#fff; }
+.btn-primary:disabled { opacity:.5; }
+.btn-secondary { background: var(--bg-sunken); color: var(--text-main); border:1px solid var(--border-color); }
+.btn-block { width:100%; }
+.add-btn {
+  display:flex; align-items:center; justify-content:center; gap:6px; width:100%;
+  background: var(--primary-soft); color: var(--primary); border: 1px dashed var(--primary);
+  border-radius: 12px; padding: 11px; font-size: 13px; font-weight: 700; cursor:pointer;
+}
+
+/* modal */
+.modal-overlay {
+  position: fixed; inset:0; background: var(--overlay); display:none; align-items:flex-end; justify-content:center;
+  z-index: 300; backdrop-filter: blur(2px);
+}
+.modal-overlay.active { display:flex; }
+.modal-box {
+  background: var(--bg-card); width:100%; max-width:480px; max-height: 88vh; overflow-y:auto;
+  border-radius: 20px 20px 0 0; padding: var(--sp-md) var(--sp-md) calc(var(--sp-md) + var(--safe-bottom));
+  display:flex; flex-direction:column; gap: var(--sp-md);
+  animation: slideUp .22s ease;
+}
+@keyframes slideUp { from { transform: translateY(24px); opacity:0;} to { transform:none; opacity:1;} }
+.modal-header { display:flex; justify-content:space-between; align-items:center; }
+.modal-header h3 { font-size:16px; font-weight:800; }
+.modal-close { background:none; border:none; font-size:18px; color:var(--text-muted); cursor:pointer; padding:4px; }
+.modal-form-actions { display:flex; gap:8px; padding-top:6px; border-top:1px solid var(--border-color); }
+.modal-form-actions .btn { flex:1; }
+
+/* bottom nav */
+.bottom-nav {
+  position: fixed; bottom:0; left:50%; transform: translateX(-50%); width:100%; max-width:480px;
+  background: var(--bg-card); border-top: 1px solid var(--border-color);
+  display:flex; padding: 6px 4px calc(6px + var(--safe-bottom)); z-index: 100;
+}
+.nav-btn {
+  flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding: 6px 2px; color: var(--text-muted); font-size: 10px; font-weight:600; cursor:pointer; border-radius:10px;
+}
+.nav-btn .nav-icon { font-size: 20px; }
+.nav-btn.active { color: var(--primary); }
+
+/* fab */
+.fab {
+  position: fixed; bottom: calc(78px + var(--safe-bottom)); right: 50%; margin-right: -220px;
+  width:52px; height:52px; background: var(--primary); color:#fff; border-radius:16px; border:none;
+  font-size:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:110;
+  box-shadow: 0 8px 18px -4px rgba(217,119,6,0.45);
+}
+@media (max-width: 519px) { .fab { right: 20px; margin-right:0; } }
+
+/* toast */
+.toast {
+  position: fixed; bottom: calc(84px + var(--safe-bottom)); left:50%; transform: translateX(-50%) translateY(10px);
+  background: var(--status-success); color:#fff; font-weight:700; font-size:12.5px; padding: 10px 16px; border-radius:10px;
+  z-index: 400; opacity:0; transition: opacity .25s, transform .25s; pointer-events:none; white-space:nowrap;
+}
+.toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+
+.offline-banner {
+  background: var(--status-attention-bg); color: var(--status-attention); font-size: 11.5px; font-weight:600;
+  padding: 8px 12px; border-radius: 10px; display:none; align-items:center; gap:6px;
+}
+.offline-banner.show { display:flex; }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">🐝</div>
+      <div class="topbar-titles">
+        <h1>BeePlanner</h1>
+        <p id="header-data">—</p>
+      </div>
+    </div>
+    <button class="topbar-theme-btn" id="theme-toggle" title="Alternar tema">🌙</button>
+  </header>
+
+  <main>
+    <div class="offline-banner" id="offline-banner">⚠️ <span>Sem conexão ao banco — alterações não serão salvas nesta sessão.</span></div>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="view active" id="view-dashboard">
+      <div class="view-header">
+        <h2>Dashboard</h2>
+        <p>Visão geral da sua Colmeia hoje.</p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="card kpi-row">
+          <div>
+            <div class="card-title">Média de Rumo</div>
+            <div class="card-subtitle">Alvo: 75% da Colmeia</div>
+          </div>
+          <div class="progress-ring" id="rumo-ring">
+            <div class="progress-ring-val" id="rumo-val">—</div>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <div class="card-title">Metas Ativas</div>
+          <div class="kpi-value accent" id="kpi-metas">0</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="card-title">Check-ins Hoje</div>
+          <div class="kpi-value" id="kpi-checkins">0/0</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="card-title">Roda da Vida (Balanceamento)</div>
+        </div>
+        <div class="radar-wrapper">
+          <svg class="radar-chart" viewBox="0 0 300 300">
+            <circle class="radar-grid" cx="150" cy="150" r="100"></circle>
+            <circle class="radar-grid" cx="150" cy="150" r="75"></circle>
+            <circle class="radar-grid" cx="150" cy="150" r="50"></circle>
+            <circle class="radar-grid" cx="150" cy="150" r="25"></circle>
+            <line class="radar-axis" x1="150" y1="50" x2="150" y2="250" />
+            <line class="radar-axis" x1="50" y1="150" x2="250" y2="150" />
+            <circle class="radar-target" cx="150" cy="150" r="75"></circle>
+            <polygon class="radar-data" id="radar-poly" points="150,150 150,150 150,150 150,150" />
+            <text x="150" y="35" class="radar-text">Profissional</text>
+            <text x="278" y="155" class="radar-text">Relações</text>
+            <text x="150" y="272" class="radar-text">Qualid. Vida</text>
+            <text x="24" y="155" class="radar-text">Pessoal</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="card-title">Metas Críticas</div>
+          <span class="card-subtitle" style="font-size:10.5px;">Mais distantes do alvo</span>
+        </div>
+        <div class="record-list" id="dashboard-critical-list"></div>
+      </div>
+    </section>
+
+    <!-- ============ TAREFAS ============ -->
+    <section class="view" id="view-tarefas">
+      <div class="view-header">
+        <h2>Tarefas do Dia</h2>
+        <p>Registre check-ins e acompanhe o que falta hoje.</p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="card kpi-card"><div class="card-title">Concluídas</div><div class="kpi-value" id="tk-done">0</div></div>
+        <div class="card kpi-card"><div class="card-title">Pendentes</div><div class="kpi-value" id="tk-pending">0</div></div>
+      </div>
+
+      <div class="toolbar" id="tarefas-filters">
+        <button class="chip active" data-filter="todas">Todas</button>
+        <button class="chip" data-filter="concluida">✅ Concluídas</button>
+        <button class="chip" data-filter="pendente">⏳ Pendentes</button>
+      </div>
+
+      <div class="record-list" id="tarefas-list"></div>
+
+      <button class="add-btn" onclick="openTaskModal()">+ Registrar Tarefa</button>
+    </section>
+
+    <!-- ============ METAS ============ -->
+    <section class="view" id="view-metas">
+      <div class="view-header">
+        <h2>Cadastro de Metas</h2>
+        <p>Defina a meta, a frequência e a área da Roda da Vida.</p>
+      </div>
+
+      <div class="search-field"><input type="text" id="metas-search" placeholder="Buscar meta..."></div>
+
+      <div class="record-list" id="metas-list"></div>
+
+      <button class="add-btn" onclick="openMetaModal()">+ Nova Meta</button>
+    </section>
+
+    <!-- ============ RODA DA VIDA ============ -->
+    <section class="view" id="view-roda">
+      <div class="view-header">
+        <h2>Roda da Vida</h2>
+        <p>Áreas agrupadas por macroárea, com peso no radar global.</p>
+      </div>
+
+      <div id="roda-groups"></div>
+
+      <button class="add-btn" onclick="openAreaModal()">+ Nova Área</button>
+
+      <div class="card">
+        <div class="card-title">Soma dos Pesos</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="progress-bar-bg" style="flex:1; height:8px;"><div class="progress-bar-fill" id="peso-fill" style="background:var(--status-success);"></div></div>
+          <span class="goal-metric" id="peso-total" style="font-weight:700;">0%</span>
+        </div>
+        <p class="card-subtitle">A soma deve totalizar 100% para a Média de Rumo ser consistente.</p>
+      </div>
+    </section>
+  </main>
+
+  <button class="fab" id="fab-btn">+</button>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="dashboard"><span class="nav-icon">📊</span>Dashboard</button>
+    <button class="nav-btn" data-view="tarefas"><span class="nav-icon">✅</span>Tarefas</button>
+    <button class="nav-btn" data-view="metas"><span class="nav-icon">🎯</span>Metas</button>
+    <button class="nav-btn" data-view="roda"><span class="nav-icon">🧭</span>Roda</button>
+  </nav>
+</div>
+
+<!-- ===================== MODAL: TAREFA ===================== -->
+<div class="modal-overlay" id="modal-tarefa">
+  <div class="modal-box">
+    <div class="modal-header"><h3>✅ Registrar Tarefa</h3><button class="modal-close" onclick="closeModal('modal-tarefa')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Vincular à meta</label>
+        <select id="tarefa-meta"></select>
+      </div>
+      <div class="form-field">
+        <label>Título da tarefa</label>
+        <input type="text" id="tarefa-titulo" placeholder="Ex: Podcast in English — ep. 12">
+      </div>
+      <div class="form-field">
+        <label>Data</label>
+        <input type="date" id="tarefa-data">
+      </div>
+      <div class="form-field">
+        <label>Origem</label>
+        <select id="tarefa-origem">
+          <option value="Manual" selected>Registro Manual</option>
+          <option value="Google Tasks">Google Tasks (Sync)</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Status</label>
+        <select id="tarefa-status">
+          <option value="pendente" selected>⏳ Pendente</option>
+          <option value="concluida">✅ Concluída</option>
+          <option value="nao_realizada">❌ Não realizada</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Observações <span class="hint">(opcional)</span></label>
+        <textarea id="tarefa-obs" placeholder="Notas rápidas sobre a execução..."></textarea>
+      </div>
+    </div>
+    <div class="modal-form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-tarefa')">Cancelar</button>
+      <button class="btn btn-primary" id="tarefa-save-btn" onclick="saveTask()">Salvar Tarefa</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: META ===================== -->
+<div class="modal-overlay" id="modal-meta">
+  <div class="modal-box">
+    <div class="modal-header"><h3>🎯 Nova Meta</h3><button class="modal-close" onclick="closeModal('modal-meta')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Nome da meta</label>
+        <input type="text" id="meta-nome" placeholder="Ex: Ler 1 capítulo da Bíblia">
+      </div>
+      <div class="form-field">
+        <label>Descrição <span class="hint">(opcional)</span></label>
+        <textarea id="meta-desc" placeholder="O que conta como conclusão..."></textarea>
+      </div>
+      <div class="form-field">
+        <label>Área da Roda da Vida</label>
+        <select id="meta-area"></select>
+      </div>
+      <div class="form-field">
+        <label>Tipo de frequência</label>
+        <select id="meta-tipo" onchange="toggleFrequencyFields(this.value)">
+          <option value="diaria">Diária</option>
+          <option value="semanal" selected>Dias específicos da semana</option>
+          <option value="mensal">Dia fixo do mês</option>
+          <option value="dia_util">Dia útil do mês</option>
+        </select>
+      </div>
+      <div class="form-field" id="campo-dias-semana">
+        <label>Dias da semana</label>
+        <div class="weekday-picker" id="weekday-picker">
+          <div class="weekday-chip" data-day="dom">DOM</div>
+          <div class="weekday-chip" data-day="seg">SEG</div>
+          <div class="weekday-chip" data-day="ter">TER</div>
+          <div class="weekday-chip" data-day="qua">QUA</div>
+          <div class="weekday-chip" data-day="qui">QUI</div>
+          <div class="weekday-chip" data-day="sex">SEX</div>
+          <div class="weekday-chip" data-day="sab">SAB</div>
+        </div>
+      </div>
+      <div class="form-field" id="campo-fixo-mes" style="display:none;">
+        <label>Dia fixo / dia útil do mês</label>
+        <select id="meta-dia-mes">
+          <option value="8">8º dia do mês</option>
+          <option value="10u">10º dia útil</option>
+          <option value="1W">1ª quarta-feira</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Alvo de aderência</label>
+        <div class="slider-row">
+          <input type="range" id="meta-alvo" min="0" max="100" value="75" oninput="document.getElementById('alvo-valor').innerText=this.value+'%'">
+          <span class="slider-value" id="alvo-valor">75%</span>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Início da vigência</label>
+        <input type="date" id="meta-inicio">
+      </div>
+      <div class="form-field">
+        <label>Cor de identificação</label>
+        <div class="color-picker" id="meta-color-picker">
+          <div class="color-swatch selected" data-color="#10B981" style="background:#10B981;"></div>
+          <div class="color-swatch" data-color="#F97316" style="background:#F97316;"></div>
+          <div class="color-swatch" data-color="#EF4444" style="background:#EF4444;"></div>
+          <div class="color-swatch" data-color="#38BDF8" style="background:#38BDF8;"></div>
+          <div class="color-swatch" data-color="#A78BFA" style="background:#A78BFA;"></div>
+          <div class="color-swatch" data-color="#FBBF24" style="background:#FBBF24;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-meta')">Cancelar</button>
+      <button class="btn btn-primary" id="meta-save-btn" onclick="saveMeta()">Salvar Meta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: ÁREA ===================== -->
+<div class="modal-overlay" id="modal-area">
+  <div class="modal-box">
+    <div class="modal-header"><h3>🧭 Nova Área da Roda da Vida</h3><button class="modal-close" onclick="closeModal('modal-area')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Nome da área</label>
+        <input type="text" id="area-nome" placeholder="Ex: Espiritualidade">
+      </div>
+      <div class="form-field">
+        <label>Ícone (emoji)</label>
+        <input type="text" id="area-icone" placeholder="🙏" maxlength="2" style="max-width:90px;">
+      </div>
+      <div class="form-field">
+        <label>Macroárea</label>
+        <select id="area-macro">
+          <option value="qualidade">🌿 Qualidade de Vida</option>
+          <option value="pessoal">🧠 Pessoal</option>
+          <option value="profissional">🐝 Profissional</option>
+          <option value="relacionamentos">❤️ Relacionamentos</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Descrição <span class="hint">(opcional)</span></label>
+        <textarea id="area-desc" placeholder="O que essa área representa..."></textarea>
+      </div>
+      <div class="form-field">
+        <label>Peso no radar global</label>
+        <div class="slider-row">
+          <input type="range" id="area-peso" min="0" max="100" value="8" oninput="document.getElementById('peso-valor').innerText=this.value+'%'">
+          <span class="slider-value" id="peso-valor">8%</span>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Cor de identificação</label>
+        <div class="color-picker" id="area-color-picker">
+          <div class="color-swatch selected" data-color="#38BDF8" style="background:#38BDF8;"></div>
+          <div class="color-swatch" data-color="#10B981" style="background:#10B981;"></div>
+          <div class="color-swatch" data-color="#F97316" style="background:#F97316;"></div>
+          <div class="color-swatch" data-color="#EC4899" style="background:#EC4899;"></div>
+          <div class="color-swatch" data-color="#A78BFA" style="background:#A78BFA;"></div>
+          <div class="color-swatch" data-color="#FBBF24" style="background:#FBBF24;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-area')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveArea()">Salvar Área</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   ESTADO
+   ============================================================ */
+let db = null;
+let dbReady = false;
+let areas = [];
+let metas = [];
+let tarefas = [];
+let taskFilter = 'todas';
+let unsubs = [];
+
+const MACROS = {
+  qualidade: { label: '🌿 Qualidade de Vida', color: '#10B981' },
+  pessoal: { label: '🧠 Pessoal', color: '#F97316' },
+  profissional: { label: '🐝 Profissional', color: '#38BDF8' },
+  relacionamentos: { label: '❤️ Relacionamentos', color: '#EC4899' }
+};
+const MACRO_ORDER = ['profissional', 'relacionamentos', 'qualidade', 'pessoal']; // top, right, bottom, left (radar)
+
+function todayISO() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+/* ============================================================
+   CABEÇALHO / DATA
+   ============================================================ */
+function renderHeaderDate() {
+  const MESES_ABREV = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const agora = new Date();
+  const inicioAno = new Date(agora.getFullYear(),0,1);
+  const diaDoAno = Math.floor((agora-inicioAno)/86400000)+1;
+  document.getElementById('header-data').textContent =
+    `${String(agora.getDate()).padStart(2,'0')} ${MESES_ABREV[agora.getMonth()]} · Dia ${String(diaDoAno).padStart(3,'0')}`;
+}
+
+/* ============================================================
+   TEMA
+   ============================================================ */
+function initTheme() {
+  const saved = (() => { try { return localStorage.getItem('bp-theme'); } catch(e){ return null; } })();
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  updateThemeBtn();
+}
+function updateThemeBtn() {
+  const current = document.documentElement.getAttribute('data-theme') ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.getElementById('theme-toggle').textContent = current === 'dark' ? '☀️' : '🌙';
+}
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme') ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('bp-theme', next); } catch(e) {}
+  updateThemeBtn();
+});
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+const FAB_ACTIONS = {
+  dashboard: () => openTaskModal(),
+  tarefas: () => openTaskModal(),
+  metas: () => openMetaModal(),
+  roda: () => openAreaModal()
+};
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+  document.getElementById('fab-btn').onclick = FAB_ACTIONS[name];
+}
+document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+document.getElementById('fab-btn').onclick = FAB_ACTIONS.dashboard;
+
+/* ============================================================
+   MODAL / TOAST
+   ============================================================ */
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(ov => ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('active'); }));
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✅ ' + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ============================================================
+   DB — INIT + SEED + SUBSCRIPTIONS
+   ============================================================ */
+async function initDb() {
+  try {
+    db = await claude.use('db');
+  } catch (e) { db = null; }
+
+  if (!db) {
+    document.getElementById('offline-banner').classList.add('show');
+    seedLocalFallback();
+    renderAll();
+    return;
+  }
+
+  dbReady = true;
+
+  unsubs.push(db.collection('areas').onSnapshot(async snap => {
+    areas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (areas.length === 0 && snap.metadata.fromCache === false) { await seedIfEmpty(); }
+    renderAll();
+  }, () => { document.getElementById('offline-banner').classList.add('show'); }));
+
+  unsubs.push(db.collection('metas').onSnapshot(snap => {
+    metas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAll();
+  }));
+
+  unsubs.push(db.collection('tarefas').onSnapshot(snap => {
+    tarefas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAll();
+  }));
+
+  // dá um tempo curto pro primeiro snapshot chegar; se tudo vazio, semeia
+  setTimeout(async () => {
+    const a = await db.collection('areas').limit(1).get();
+    if (a.empty) await seedIfEmpty();
+  }, 1200);
+}
+
+let seeded = false;
+async function seedIfEmpty() {
+  if (seeded || !db) return;
+  const check = await db.collection('areas').limit(1).get();
+  if (!check.empty) return;
+  seeded = true;
+
+  const areaSeed = [
+    { nome:'Saúde Física', icone:'🧘', macro:'qualidade', desc:'Exercício, alimentação e sono.', peso:10, cor:'#10B981' },
+    { nome:'Saúde Mental', icone:'📚', macro:'qualidade', desc:'Leitura, mindfulness e descanso mental.', peso:8, cor:'#10B981' },
+    { nome:'Ambiente / Casa', icone:'🏠', macro:'qualidade', desc:'Organização e conforto do lar.', peso:6, cor:'#10B981' },
+    { nome:'Desenvolvimento Intelectual', icone:'🧠', macro:'pessoal', desc:'Estudo, cursos e novas habilidades.', peso:8, cor:'#F97316' },
+    { nome:'Espiritualidade', icone:'🙏', macro:'pessoal', desc:'Fé, propósito e reflexão.', peso:7, cor:'#F97316' },
+    { nome:'Lazer e Hobbies', icone:'🎨', macro:'pessoal', desc:'Tempo livre e atividades prazerosas.', peso:7, cor:'#F97316' },
+    { nome:'Carreira', icone:'🐝', macro:'profissional', desc:'Crescimento profissional e projetos de trabalho.', peso:7, cor:'#38BDF8' },
+    { nome:'Projetos Pessoais', icone:'📈', macro:'profissional', desc:'Iniciativas próprias fora do emprego principal.', peso:6, cor:'#38BDF8' },
+    { nome:'Recursos Financeiros', icone:'💰', macro:'profissional', desc:'Renda, investimentos e segurança financeira.', peso:8, cor:'#38BDF8' },
+    { nome:'Contribuição Social', icone:'🌍', macro:'profissional', desc:'Impacto na comunidade e voluntariado.', peso:8, cor:'#38BDF8' },
+    { nome:'Vida Social', icone:'🎉', macro:'relacionamentos', desc:'Amizades e rede de contatos.', peso:8, cor:'#EC4899' },
+    { nome:'Vida Amorosa', icone:'💑', macro:'relacionamentos', desc:'Relacionamento conjugal e vida afetiva.', peso:9, cor:'#EC4899' },
+    { nome:'Família', icone:'👨‍👩‍👧', macro:'relacionamentos', desc:'Vínculos familiares e presença com entes queridos.', peso:8, cor:'#EC4899' }
+  ];
+
+  const areaRefs = {};
+  for (const a of areaSeed) {
+    const ref = await db.collection('areas').add(a);
+    areaRefs[a.nome] = ref.id;
+  }
+
+  const metaSeed = [
+    { nome:'Ler 1 capítulo da Bíblia', areaNome:'Espiritualidade', tipo:'diaria', dias:[], alvo:75, progresso:45, cor:'#EF4444', inicio:'2026-01-01' },
+    { nome:'Leitura Tech', areaNome:'Carreira', tipo:'semanal', dias:['dom','ter','qui'], alvo:75, progresso:68, cor:'#F97316', inicio:'2026-01-01' },
+    { nome:'Podcast in English', areaNome:'Saúde Mental', tipo:'semanal', dias:['ter','qui'], alvo:75, progresso:72, cor:'#F97316', inicio:'2026-01-01' },
+    { nome:'Guardar dinheiro', areaNome:'Recursos Financeiros', tipo:'dia_util', diaMes:'10u', alvo:75, progresso:80, cor:'#10B981', inicio:'2026-01-01' },
+    { nome:'Ligar para os pais', areaNome:'Família', tipo:'semanal', dias:['dom'], alvo:75, progresso:88, cor:'#10B981', inicio:'2026-01-01' },
+    { nome:'Treino de força', areaNome:'Saúde Física', tipo:'semanal', dias:['seg','qua','sex'], alvo:75, progresso:91, cor:'#10B981', inicio:'2026-01-01' }
+  ];
+
+  const metaRefs = {};
+  for (const m of metaSeed) {
+    const { areaNome, ...rest } = m;
+    const ref = await db.collection('metas').add({ ...rest, areaId: areaRefs[areaNome] || null });
+    metaRefs[m.nome] = ref.id;
+  }
+
+  const hoje = todayISO();
+  const taskSeed = [
+    { titulo:'Leitura Tech — capítulo 4', metaNome:'Leitura Tech', data:hoje, origem:'Google Tasks', status:'concluida', obs:'' },
+    { titulo:'Treino de força', metaNome:'Treino de força', data:hoje, origem:'Manual', status:'concluida', obs:'' },
+    { titulo:'Podcast in English', metaNome:'Podcast in English', data:hoje, origem:'Google Tasks', status:'pendente', obs:'' },
+    { titulo:'Ler 1 capítulo da Bíblia', metaNome:'Ler 1 capítulo da Bíblia', data:hoje, origem:'Manual', status:'pendente', obs:'' }
+  ];
+  for (const t of taskSeed) {
+    const { metaNome, ...rest } = t;
+    await db.collection('tarefas').add({ ...rest, metaId: metaRefs[metaNome] || null });
+  }
+}
+
+// fallback em memória, caso db não esteja disponível nesta visualização
+function seedLocalFallback() {
+  areas = [
+    { id:'a1', nome:'Saúde Física', icone:'🧘', macro:'qualidade', desc:'Exercício, alimentação e sono.', peso:10, cor:'#10B981' },
+    { id:'a2', nome:'Carreira', icone:'🐝', macro:'profissional', desc:'Crescimento profissional.', peso:20, cor:'#38BDF8' },
+    { id:'a3', nome:'Família', icone:'👨‍👩‍👧', macro:'relacionamentos', desc:'Vínculos familiares.', peso:20, cor:'#EC4899' },
+    { id:'a4', nome:'Espiritualidade', icone:'🙏', macro:'pessoal', desc:'Fé e propósito.', peso:20, cor:'#F97316' }
+  ];
+  metas = [
+    { id:'m1', nome:'Ler 1 capítulo da Bíblia', areaId:'a4', tipo:'diaria', dias:[], alvo:75, progresso:45, cor:'#EF4444', inicio:todayISO() },
+    { id:'m2', nome:'Treino de força', areaId:'a1', tipo:'semanal', dias:['seg','qua','sex'], alvo:75, progresso:91, cor:'#10B981', inicio:todayISO() }
+  ];
+  tarefas = [
+    { id:'t1', titulo:'Treino de força', metaId:'m2', data:todayISO(), origem:'Manual', status:'concluida', obs:'' },
+    { id:'t2', titulo:'Ler 1 capítulo da Bíblia', metaId:'m1', data:todayISO(), origem:'Manual', status:'pendente', obs:'' }
+  ];
+}
+
+/* ============================================================
+   ESCRITA (com fallback local se db indisponível)
+   ============================================================ */
+function localId() { return 'l' + Math.random().toString(36).slice(2,10); }
+
+async function addDoc(collection, data) {
+  if (dbReady && db) { await db.collection(collection).add(data); return; }
+  const arr = collection === 'areas' ? areas : collection === 'metas' ? metas : tarefas;
+  arr.push({ id: localId(), ...data });
+  renderAll();
+}
+async function updateDoc(collection, id, data) {
+  if (dbReady && db) { await db.doc(collection + '/' + id).update(data); return; }
+  const arr = collection === 'areas' ? areas : collection === 'metas' ? metas : tarefas;
+  const item = arr.find(x => x.id === id);
+  if (item) Object.assign(item, data);
+  renderAll();
+}
+async function deleteDocById(collection, id) {
+  if (dbReady && db) { await db.doc(collection + '/' + id).delete(); return; }
+  if (collection === 'areas') areas = areas.filter(x => x.id !== id);
+  if (collection === 'metas') metas = metas.filter(x => x.id !== id);
+  if (collection === 'tarefas') tarefas = tarefas.filter(x => x.id !== id);
+  renderAll();
+}
+
+/* ============================================================
+   CÁLCULOS
+   ============================================================ */
+function areaAvgProgress(areaId) {
+  const ms = metas.filter(m => m.areaId === areaId);
+  if (ms.length === 0) return null;
+  return ms.reduce((s,m) => s + (m.progresso||0), 0) / ms.length;
+}
+function macroScore(macro) {
+  const as = areas.filter(a => a.macro === macro);
+  let wsum = 0, w = 0;
+  as.forEach(a => {
+    const avg = areaAvgProgress(a.id);
+    if (avg !== null) { wsum += avg * (a.peso||0); w += (a.peso||0); }
+  });
+  return w > 0 ? wsum / w : 0;
+}
+function globalRumo() {
+  let wsum = 0, w = 0;
+  areas.forEach(a => {
+    const avg = areaAvgProgress(a.id);
+    if (avg !== null) { wsum += avg * (a.peso||0); w += (a.peso||0); }
+  });
+  return w > 0 ? Math.round(wsum / w) : 0;
+}
+function statusFor(m) {
+  const diff = (m.progresso||0) - (m.alvo||75);
+  if (diff <= -20) return { key:'low', label:'Atrasado' };
+  if (diff < 0) return { key:'attention', label:'Atenção' };
+  return { key:'success', label:'No Rumo' };
+}
+function areaLabel(a) { return `${a.icone||'•'} ${a.nome}`; }
+function areaOf(id) { return areas.find(a => a.id === id); }
+function metaOf(id) { return metas.find(m => m.id === id); }
+
+/* ============================================================
+   RENDER — DASHBOARD
+   ============================================================ */
+function renderDashboard() {
+  const rumo = globalRumo();
+  document.getElementById('rumo-val').textContent = rumo + '%';
+  document.getElementById('rumo-ring').style.background =
+    `conic-gradient(var(--primary) ${rumo}%, var(--border-color) 0)`;
+  document.getElementById('kpi-metas').textContent = metas.length;
+
+  const hoje = todayISO();
+  const todayTasks = tarefas.filter(t => t.data === hoje);
+  const doneTasks = todayTasks.filter(t => t.status === 'concluida');
+  document.getElementById('kpi-checkins').textContent = `${doneTasks.length}/${todayTasks.length}`;
+
+  // radar
+  const scores = MACRO_ORDER.map(m => macroScore(m)); // top, right, bottom, left
+  const pts = [
+    [150, 150 - scores[0]], // top
+    [150 + scores[1], 150], // right
+    [150, 150 + scores[2]], // bottom
+    [150 - scores[3], 150]  // left
+  ].map(p => p.join(',')).join(' ');
+  document.getElementById('radar-poly').setAttribute('points', pts);
+
+  // metas críticas
+  const sorted = [...metas].sort((a,b) => ((a.progresso||0)-(a.alvo||75)) - ((b.progresso||0)-(b.alvo||75))).slice(0,4);
+  const list = document.getElementById('dashboard-critical-list');
+  if (sorted.length === 0) {
+    list.innerHTML = `<div class="empty-state"><span class="icon">🎯</span>Cadastre metas para ver seu radar de prioridades.</div>`;
+  } else {
+    list.innerHTML = sorted.map(m => {
+      const st = statusFor(m);
+      return `<div class="goal-item">
+        <div class="goal-top">
+          <span class="badge ${st.key}">${st.label}</span>
+          <span class="goal-metric">${m.progresso||0}% / ${m.alvo||75}%</span>
+        </div>
+        <span class="goal-title">${escapeHtml(m.nome)}</span>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${Math.min(m.progresso||0,100)}%; background:var(--status-${st.key === 'low' ? 'low' : st.key === 'attention' ? 'attention' : 'success'});"></div></div>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* ============================================================
+   RENDER — TAREFAS
+   ============================================================ */
+function renderTarefas() {
+  const hoje = todayISO();
+  const todays = tarefas.filter(t => t.data === hoje);
+  document.getElementById('tk-done').textContent = todays.filter(t => t.status === 'concluida').length;
+  document.getElementById('tk-pending').textContent = todays.filter(t => t.status !== 'concluida').length;
+
+  let list = [...tarefas].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+  if (taskFilter === 'concluida') list = list.filter(t => t.status === 'concluida');
+  if (taskFilter === 'pendente') list = list.filter(t => t.status !== 'concluida');
+
+  const el = document.getElementById('tarefas-list');
+  if (list.length === 0) {
+    el.innerHTML = `<div class="empty-state"><span class="icon">✅</span>Nenhuma tarefa por aqui ainda.</div>`;
+    return;
+  }
+  el.innerHTML = list.map(t => {
+    const meta = metaOf(t.metaId);
+    const area = meta ? areaOf(meta.areaId) : null;
+    const done = t.status === 'concluida';
+    return `<div class="record-item">
+      <input type="checkbox" class="record-checkbox" ${done ? 'checked' : ''} onchange="toggleTask('${t.id}', this.checked)">
+      <div class="record-main">
+        <span class="record-title ${done ? 'done':''}">${escapeHtml(t.titulo)}</span>
+        <span class="record-meta">${area ? escapeHtml(areaLabel(area))+' · ' : ''}${escapeHtml(t.origem||'Manual')} · ${t.data||''}</span>
+      </div>
+      <div class="record-actions">
+        <button class="icon-btn" title="Excluir" onclick="deleteTask('${t.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function toggleTask(id, checked) {
+  const t = tarefas.find(x => x.id === id);
+  if (!t) return;
+  const novoStatus = checked ? 'concluida' : 'pendente';
+  await updateDoc('tarefas', id, { status: novoStatus });
+  if (t.metaId) {
+    const m = metaOf(t.metaId);
+    if (m) {
+      const delta = checked ? 2 : -2;
+      const novo = Math.max(0, Math.min(100, (m.progresso||0) + delta));
+      await updateDoc('metas', m.id, { progresso: novo });
+    }
+  }
+  showToast(checked ? 'Tarefa concluída!' : 'Marcada como pendente.');
+}
+async function deleteTask(id) {
+  await deleteDocById('tarefas', id);
+  showToast('Tarefa removida.');
+}
+document.querySelectorAll('#tarefas-filters .chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#tarefas-filters .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    taskFilter = chip.dataset.filter;
+    renderTarefas();
+  });
+});
+
+function openTaskModal() {
+  const sel = document.getElementById('tarefa-meta');
+  sel.innerHTML = `<option value="">— Tarefa avulsa (sem meta) —</option>` +
+    metas.map(m => `<option value="${m.id}">${escapeHtml(m.nome)}</option>`).join('');
+  document.getElementById('tarefa-titulo').value = '';
+  document.getElementById('tarefa-data').value = todayISO();
+  document.getElementById('tarefa-origem').value = 'Manual';
+  document.getElementById('tarefa-status').value = 'pendente';
+  document.getElementById('tarefa-obs').value = '';
+  openModal('modal-tarefa');
+}
+async function saveTask() {
+  const titulo = document.getElementById('tarefa-titulo').value.trim();
+  if (!titulo) { document.getElementById('tarefa-titulo').focus(); return; }
+  const metaId = document.getElementById('tarefa-meta').value || null;
+  await addDoc('tarefas', {
+    titulo,
+    metaId,
+    data: document.getElementById('tarefa-data').value || todayISO(),
+    origem: document.getElementById('tarefa-origem').value,
+    status: document.getElementById('tarefa-status').value,
+    obs: document.getElementById('tarefa-obs').value.trim()
+  });
+  closeModal('modal-tarefa');
+  showToast('Tarefa registrada!');
+}
+
+/* ============================================================
+   RENDER — METAS
+   ============================================================ */
+function renderMetas() {
+  const q = (document.getElementById('metas-search').value || '').toLowerCase();
+  const list = metas.filter(m => m.nome.toLowerCase().includes(q));
+  const el = document.getElementById('metas-list');
+  if (list.length === 0) {
+    el.innerHTML = `<div class="empty-state"><span class="icon">🎯</span>${metas.length === 0 ? 'Nenhuma meta cadastrada ainda.' : 'Nenhuma meta encontrada.'}</div>`;
+    return;
+  }
+  el.innerHTML = list.map(m => {
+    const area = areaOf(m.areaId);
+    const st = statusFor(m);
+    const freq = m.tipo === 'diaria' ? 'Diária'
+      : m.tipo === 'semanal' ? (m.dias||[]).map(d=>d.toUpperCase()).join('/')
+      : m.tipo === 'dia_util' ? 'Dia útil do mês'
+      : 'Dia fixo do mês';
+    return `<div class="record-item">
+      <span class="record-dot" style="background:${m.cor||'#94A3B8'};"></span>
+      <div class="record-main">
+        <span class="record-title">${escapeHtml(m.nome)}</span>
+        <span class="record-meta">${area ? escapeHtml(areaLabel(area))+' · ' : ''}${escapeHtml(freq)}</span>
+      </div>
+      <span class="record-stat" style="color:var(--status-${st.key === 'low' ? 'low' : st.key === 'attention' ? 'attention' : 'success'});">${m.progresso||0}%</span>
+      <div class="record-actions">
+        <button class="icon-btn" title="Excluir" onclick="deleteMeta('${m.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('metas-search').addEventListener('input', renderMetas);
+
+async function deleteMeta(id) {
+  await deleteDocById('metas', id);
+  showToast('Meta removida.');
+}
+function toggleFrequencyFields(tipo) {
+  document.getElementById('campo-dias-semana').style.display = tipo === 'semanal' ? 'flex' : 'none';
+  document.getElementById('campo-fixo-mes').style.display = (tipo === 'mensal' || tipo === 'dia_util') ? 'flex' : 'none';
+}
+function openMetaModal() {
+  const sel = document.getElementById('meta-area');
+  sel.innerHTML = areas.length
+    ? areas.map(a => `<option value="${a.id}">${escapeHtml(areaLabel(a))}</option>`).join('')
+    : `<option value="">Cadastre uma área na Roda da Vida primeiro</option>`;
+  document.getElementById('meta-nome').value = '';
+  document.getElementById('meta-desc').value = '';
+  document.getElementById('meta-tipo').value = 'semanal';
+  toggleFrequencyFields('semanal');
+  document.querySelectorAll('#weekday-picker .weekday-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('meta-alvo').value = 75;
+  document.getElementById('alvo-valor').textContent = '75%';
+  document.getElementById('meta-inicio').value = todayISO();
+  document.querySelectorAll('#meta-color-picker .color-swatch').forEach((s,i) => s.classList.toggle('selected', i===0));
+  openModal('modal-meta');
+}
+async function saveMeta() {
+  const nome = document.getElementById('meta-nome').value.trim();
+  if (!nome) { document.getElementById('meta-nome').focus(); return; }
+  const tipo = document.getElementById('meta-tipo').value;
+  const dias = Array.from(document.querySelectorAll('#weekday-picker .weekday-chip.selected')).map(c => c.dataset.day);
+  const cor = document.querySelector('#meta-color-picker .color-swatch.selected')?.dataset.color || '#10B981';
+  await addDoc('metas', {
+    nome,
+    desc: document.getElementById('meta-desc').value.trim(),
+    areaId: document.getElementById('meta-area').value || null,
+    tipo,
+    dias: tipo === 'semanal' ? dias : [],
+    diaMes: (tipo === 'mensal' || tipo === 'dia_util') ? document.getElementById('meta-dia-mes').value : null,
+    alvo: parseInt(document.getElementById('meta-alvo').value, 10),
+    progresso: 0,
+    inicio: document.getElementById('meta-inicio').value || todayISO(),
+    cor
+  });
+  closeModal('modal-meta');
+  showToast('Meta salva com sucesso!');
+}
+
+/* ============================================================
+   RENDER — RODA DA VIDA
+   ============================================================ */
+function renderRoda() {
+  const el = document.getElementById('roda-groups');
+  const groups = MACRO_ORDER.map(key => ({ key, ...MACROS[key], items: areas.filter(a => a.macro === key) }))
+    .filter(g => true);
+
+  el.innerHTML = groups.map(g => `
+    <div class="macro-group" style="margin-bottom:14px;">
+      <div class="macro-header" style="background:${g.color}18;">
+        <span>${g.label.split(' ')[0]}</span>
+        <span class="macro-header-label" style="color:${g.color};">${g.label.split(' ').slice(1).join(' ')}</span>
+        <span class="macro-header-count">${g.items.length} área${g.items.length===1?'':'s'} · peso ${g.items.reduce((s,a)=>s+(a.peso||0),0)}%</span>
+      </div>
+      <div class="macro-body">
+        ${g.items.length === 0 ? `<div class="empty-state" style="padding:14px;">Nenhuma área nesta macroárea ainda.</div>` :
+          g.items.map(a => {
+            const count = metas.filter(m => m.areaId === a.id).length;
+            return `<div class="area-card" style="border-left-color:${a.cor||g.color};">
+              <div class="area-card-top">
+                <span class="area-card-title">${a.icone||'•'} ${escapeHtml(a.nome)}</span>
+                <div class="record-actions"><button class="icon-btn" title="Excluir" onclick="deleteArea('${a.id}')">🗑️</button></div>
+              </div>
+              ${a.desc ? `<p class="area-card-desc">${escapeHtml(a.desc)}</p>` : ''}
+              <div class="area-card-footer">
+                <span>Peso: <strong style="color:var(--text-main);">${a.peso||0}%</strong></span>
+                <span>${count} meta${count===1?'':'s'}</span>
+              </div>
+            </div>`;
+          }).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  const total = areas.reduce((s,a) => s + (a.peso||0), 0);
+  document.getElementById('peso-total').textContent = total + '%';
+  document.getElementById('peso-total').style.color = total === 100 ? 'var(--status-success)' : 'var(--status-attention)';
+  const fill = document.getElementById('peso-fill');
+  fill.style.width = Math.min(total,100) + '%';
+  fill.style.background = total === 100 ? 'var(--status-success)' : 'var(--status-attention)';
+}
+async function deleteArea(id) {
+  const linked = metas.filter(m => m.areaId === id).length;
+  if (linked > 0) { showToast(`Existem ${linked} meta(s) nesta área.`); return; }
+  await deleteDocById('areas', id);
+  showToast('Área removida.');
+}
+function openAreaModal() {
+  document.getElementById('area-nome').value = '';
+  document.getElementById('area-icone').value = '';
+  document.getElementById('area-macro').value = 'qualidade';
+  document.getElementById('area-desc').value = '';
+  document.getElementById('area-peso').value = 8;
+  document.getElementById('peso-valor').textContent = '8%';
+  document.querySelectorAll('#area-color-picker .color-swatch').forEach((s,i) => s.classList.toggle('selected', i===0));
+  openModal('modal-area');
+}
+async function saveArea() {
+  const nome = document.getElementById('area-nome').value.trim();
+  if (!nome) { document.getElementById('area-nome').focus(); return; }
+  const cor = document.querySelector('#area-color-picker .color-swatch.selected')?.dataset.color || '#38BDF8';
+  await addDoc('areas', {
+    nome,
+    icone: document.getElementById('area-icone').value.trim() || '🔹',
+    macro: document.getElementById('area-macro').value,
+    desc: document.getElementById('area-desc').value.trim(),
+    peso: parseInt(document.getElementById('area-peso').value, 10),
+    cor
+  });
+  closeModal('modal-area');
+  showToast('Área adicionada à Roda da Vida!');
+}
+
+/* ============================================================
+   COLOR SWATCH SELECTION (genérico)
+   ============================================================ */
+document.querySelectorAll('.color-picker').forEach(group => {
+  group.addEventListener('click', e => {
+    const sw = e.target.closest('.color-swatch');
+    if (!sw) return;
+    group.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    sw.classList.add('selected');
+  });
+});
+document.getElementById('weekday-picker').addEventListener('click', e => {
+  const chip = e.target.closest('.weekday-chip');
+  if (chip) chip.classList.toggle('selected');
+});
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function renderAll() {
+  renderDashboard();
+  renderTarefas();
+  renderMetas();
+  renderRoda();
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+renderHeaderDate();
+initTheme();
+initDb();
+</script>
+</body>
+</html>
